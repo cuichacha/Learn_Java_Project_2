@@ -134,7 +134,7 @@ public class ResponseResult<T> implements Serializable {
     }
 
 
-    public static void main(String[] args) {
+//    public static void main(String[] args) {
         //前置
         /*AppHttpCodeEnum success = AppHttpCodeEnum.SUCCESS;
         System.out.println(success.getCode());
@@ -158,13 +158,13 @@ public class ResponseResult<T> implements Serializable {
         System.out.println(JSON.toJSONString(result));*/
 
         //查询分页信息
-        PageResponseResult responseResult = new PageResponseResult(1,5,50);
-        List list = new ArrayList();
-        list.add("itcast");
-        list.add("itheima");
-        responseResult.setData(list);
-        System.out.println(JSON.toJSONString(responseResult));
+//        PageResponseResult responseResult = new PageResponseResult(1,5,50);
+//        List list = new ArrayList();
+//        list.add("itcast");
+//        list.add("itheima");
+//        responseResult.setData(list);
+//        System.out.println(JSON.toJSONString(responseResult));
 
-    }
+//    }
 
 }
