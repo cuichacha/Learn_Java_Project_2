@@ -1,7 +1,10 @@
 package com.heima.admin.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.heima.admin.mapper.AdChannelMapper;
 import com.heima.admin.service.AdChannelService;
@@ -41,8 +44,11 @@ public class AdChannelServiceImpl extends ServiceImpl<AdChannelMapper, AdChannel
         Integer startPage = dto.getPage();
         Integer pageSize = dto.getSize();
         IPage<AdChannel> iPage = new Page<>(startPage, pageSize);
-
-        IPage<AdChannel> adChannelPage = page(iPage);
+        Wrapper<AdChannel> queryWrapper = new QueryWrapper<>();
+        if (dto.getName() != null) {
+            queryWrapper = query().like("name", dto.getName());
+        }
+        IPage<AdChannel> adChannelPage = page(iPage, queryWrapper);
 
 //        QueryWrapper<AdChannel> queryWrapper= new QueryWrapper<>();
 //        if (dto.getName() != null) {
