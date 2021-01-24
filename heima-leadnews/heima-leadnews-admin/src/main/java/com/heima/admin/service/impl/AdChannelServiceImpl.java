@@ -38,17 +38,19 @@ public class AdChannelServiceImpl extends ServiceImpl<AdChannelMapper, AdChannel
         dto.checkParam();
 
         // 3. 查询结果
-        IPage<AdChannel> page = new Page<>(dto.getPage(), dto.getSize());
+        Integer startPage = dto.getPage();
+        Integer pageSize = dto.getSize();
+        IPage<AdChannel> iPage = new Page<>(startPage, pageSize);
         QueryWrapper<AdChannel> queryWrapper= new QueryWrapper<>();
         if (dto.getName() != null) {
             queryWrapper.like("name", dto.getName());
         }
-        IPage<AdChannel> adChannelIPage = adChannelMapper.selectPage(page, queryWrapper);
+        IPage<AdChannel> adChannelPage = adChannelMapper.selectPage(iPage, queryWrapper);
 
         // 4. 封装结果
-        Long total = adChannelIPage.getTotal();
-        ResponseResult responseResult = new PageResponseResult(dto.getPage(), dto.getSize(), total.intValue());
-        responseResult.setData(adChannelIPage.getRecords());
+        Long total = adChannelPage.getTotal();
+        ResponseResult responseResult = new PageResponseResult(startPage, pageSize, total.intValue());
+        responseResult.setData(adChannelPage.getRecords());
 
         return responseResult;
     }

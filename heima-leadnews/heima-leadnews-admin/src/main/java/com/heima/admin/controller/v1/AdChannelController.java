@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 1/23/21 21:57
  */
 @RestController
-@RequestMapping("//api/v1/channel")
+@RequestMapping("/api/v1/channel")
 public class AdChannelController implements AdChannelControllerApi {
 
     @Autowired
