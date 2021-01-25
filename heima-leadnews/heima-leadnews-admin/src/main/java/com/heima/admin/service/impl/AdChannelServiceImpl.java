@@ -1,6 +1,7 @@
 package com.heima.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -13,6 +14,7 @@ import com.heima.model.common.admin.pojos.AdChannel;
 import com.heima.model.common.dtos.PageResponseResult;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,11 +47,17 @@ public class AdChannelServiceImpl extends ServiceImpl<AdChannelMapper, AdChannel
         Integer pageSize = dto.getSize();
         IPage<AdChannel> iPage = new Page<>(startPage, pageSize);
 
-        QueryWrapper<AdChannel> queryWrapper= new QueryWrapper<>();
-        if (dto.getName() != null) {
-            queryWrapper.like("name", dto.getName());
+//        QueryWrapper<AdChannel> queryWrapper= new QueryWrapper<>();
+//        if (dto.getName() != null) {
+//            queryWrapper.like("name", dto.getName());
+//        }
+//        IPage<AdChannel> adChannelPage = adChannelMapper.selectPage(iPage, queryWrapper);
+
+        LambdaQueryWrapper<AdChannel> lambdaQueryWrapper = new LambdaQueryWrapper();
+        if (StringUtils.isNotEmpty(dto.getName()) && StringUtils.isNotBlank(dto.getName())) {
+            lambdaQueryWrapper.like(AdChannel::getName, dto.getName());
         }
-        IPage<AdChannel> adChannelPage = adChannelMapper.selectPage(iPage, queryWrapper);
+        IPage adChannelPage = page(iPage, lambdaQueryWrapper);
 
         // 4. 封装结果
         Long total = adChannelPage.getTotal();
