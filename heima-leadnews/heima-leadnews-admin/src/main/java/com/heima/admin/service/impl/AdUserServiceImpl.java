@@ -52,9 +52,9 @@ public class AdUserServiceImpl extends ServiceImpl<AdUserMapper, AdUser> impleme
             String token = AppJwtUtil.getToken(id.longValue());
             adUser.setPassword("");
             adUser.setSalt("");
-            Map<String, Object> map = Maps.newHashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("token", token);
-            map.put("adUser", adUser);
+            map.put("user", adUser);
             return ResponseResult.okResult(map);
         }
         return ResponseResult.errorResult(AppHttpCodeEnum.LOGIN_PASSWORD_ERROR);
