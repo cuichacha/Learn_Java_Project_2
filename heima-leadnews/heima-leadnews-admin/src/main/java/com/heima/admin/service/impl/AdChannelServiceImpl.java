@@ -1,6 +1,7 @@
 package com.heima.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -44,20 +45,15 @@ public class AdChannelServiceImpl extends ServiceImpl<AdChannelMapper, AdChannel
         Integer startPage = dto.getPage();
         Integer pageSize = dto.getSize();
         IPage<AdChannel> iPage = new Page<>(startPage, pageSize);
-        Wrapper<AdChannel> queryWrapper = new QueryWrapper<>();
-        if (dto.getName() != null) {
-            queryWrapper = query().like("name", dto.getName());
-        }
-        IPage<AdChannel> adChannelPage = page(iPage, queryWrapper);
 
-//        QueryWrapper<AdChannel> queryWrapper= new QueryWrapper<>();
-//        if (dto.getName() != null) {
-//            queryWrapper.like("name", dto.getName());
-//        }
-//        IPage<AdChannel> adChannelPage = adChannelMapper.selectPage(iPage, queryWrapper);
+        QueryWrapper<AdChannel> queryWrapper= new QueryWrapper<>();
+        if (dto.getName() != null) {
+            queryWrapper.like("name", dto.getName());
+        }
+        IPage<AdChannel> adChannelPage = adChannelMapper.selectPage(iPage, queryWrapper);
 
         // 4. 封装结果
-        Long total = adChannelPage.getTotal();
+        Long total = iPage.getTotal();
         ResponseResult responseResult = new PageResponseResult(startPage, pageSize, total.intValue());
         responseResult.setData(adChannelPage.getRecords());
 
