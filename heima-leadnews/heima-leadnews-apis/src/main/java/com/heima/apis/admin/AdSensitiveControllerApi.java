@@ -4,6 +4,7 @@ import com.heima.model.common.admin.dtos.SensitiveDto;
 import com.heima.model.common.admin.pojos.AdSensitive;
 import com.heima.model.common.dtos.ResponseResult;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * @author cuichacha
@@ -17,6 +18,7 @@ public interface AdSensitiveControllerApi {
      * @param sensitiveDto
      * @return
      */
+    @ApiOperation("敏感词列表查询")
     public abstract ResponseResult sensitiveWordsList(SensitiveDto sensitiveDto);
 
     /**
@@ -24,6 +26,7 @@ public interface AdSensitiveControllerApi {
      * @param AdSensitive
      * @return
      */
+    @ApiOperation("新增敏感词")
     public abstract ResponseResult addSensitiveWords(AdSensitive AdSensitive);
 
     /**
@@ -31,6 +34,7 @@ public interface AdSensitiveControllerApi {
      * @param AdSensitive
      * @return
      */
+    @ApiOperation("更新敏感词")
     public abstract ResponseResult updateSensitiveWords(AdSensitive AdSensitive);
 
     /**
@@ -38,5 +42,6 @@ public interface AdSensitiveControllerApi {
      * @param id
      * @return
      */
+    @ApiOperation("删除敏感词")
     public abstract ResponseResult removeSensitiveWords(Integer id);
 }
