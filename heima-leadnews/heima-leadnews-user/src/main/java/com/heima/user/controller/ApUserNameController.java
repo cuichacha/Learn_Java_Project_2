@@ -5,6 +5,7 @@ import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.user.dtos.AuthDto;
 import com.heima.user.service.ApUserRealNameService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,8 +22,20 @@ public class ApUserNameController implements ApUserRealNameControllerApi {
     private ApUserRealNameService apUserRealNameService;
 
     @Override
-    @RequestMapping("/list")
+    @PostMapping("/list")
     public ResponseResult userListByStatus(@RequestBody AuthDto authDto) {
         return apUserRealNameService.apUserRealNameList(authDto);
+    }
+
+    @Override
+    @PostMapping("/authPass")
+    public ResponseResult authPass(@RequestBody AuthDto authDto) {
+        return null;
+    }
+
+    @Override
+    @PostMapping("/authFail")
+    public ResponseResult authFail(@RequestBody AuthDto authDto) {
+        return null;
     }
 }
