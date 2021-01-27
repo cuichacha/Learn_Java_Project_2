@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiOperation;
  * @author cuichacha
  * @date 1/27/21 07:39
  */
-@Api(value = "认证作者", tags = "ApAuthor", description = "认证作者API")
+@Api(value = "作者认证", tags = "ApAuthor", description = "作者认证API")
 public interface AuthorControllerApi {
 
     /**

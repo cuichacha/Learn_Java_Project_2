@@ -10,5 +10,10 @@ import com.heima.model.common.dtos.ResponseResult;
  */
 public interface ArticleService extends IService<ApAuthor> {
 
+    /**
+     * 保存作者
+     * @param apAuthor
+     * @return
+     */
     public abstract ResponseResult saveAuthor(ApAuthor apAuthor);
 }
