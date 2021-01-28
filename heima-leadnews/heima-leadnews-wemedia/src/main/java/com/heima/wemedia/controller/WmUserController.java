@@ -26,7 +26,7 @@ public class WmUserController implements WmUserControllerApi {
 
     @Override
     @GetMapping("/findByName/{name}")
-    public WmUser findWmUserByName(@PathVariable("name") String name) {
-        return null;
+    public ResponseResult findWmUserByName(@PathVariable("name") String name) {
+        return wmUserService.findWmUserByName(name);
     }
 }

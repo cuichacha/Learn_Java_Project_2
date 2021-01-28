@@ -27,6 +27,6 @@ public class AuthorController implements AuthorControllerApi {
     @Override
     @GetMapping("/findByUserId/{id}")
     public ResponseResult findAuthorByUserId(@PathVariable("id") Integer userId) {
-        return null;
+        return authorService.findAuthorByUserId(userId);
     }
 }

@@ -70,7 +70,7 @@ public class ApUserRealNameServiceImpl extends ServiceImpl<ApUserRealNameMapper,
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
         // 校验状态
-        if (!checkStatus(status)) {
+        if (checkStatus(status)) {
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
         // 改变用户状态

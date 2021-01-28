@@ -26,5 +26,5 @@ public interface WmUserControllerApi {
      * @return
      */
     @ApiOperation(value = "查询自媒体用户")
-    public WmUser findWmUserByName(String name);
+    public ResponseResult findWmUserByName(String name);
 }

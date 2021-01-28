@@ -28,6 +28,6 @@ public interface ArticleFeign {
      * @param id
      * @return
      */
-    @GetMapping("/findByUserId/{id}")
+    @GetMapping("/api/v1/author/findByUserId/{id}")
     public ResponseResult findAuthorByUserId(@PathVariable("id") Integer id);
 }
