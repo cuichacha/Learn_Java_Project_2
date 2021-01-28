@@ -19,4 +19,12 @@ public interface WmUserControllerApi {
      */
     @ApiOperation(value = "添加自媒体用户")
     public abstract ResponseResult saveWmUser(WmUser wmUser);
+
+    /**
+     * 按照名称查询用户
+     * @param name
+     * @return
+     */
+    @ApiOperation(value = "查询自媒体用户")
+    public WmUser findWmUserByName(String name);
 }

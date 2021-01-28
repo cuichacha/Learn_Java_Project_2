@@ -20,4 +20,12 @@ public interface AuthorControllerApi {
     @ApiOperation(value = "保存作者")
     public abstract ResponseResult saveAuthor(ApAuthor apAuthor);
 
+    /**
+     * 根据uerId查询对应作者
+     * @param userId
+     * @return
+     */
+    @ApiOperation(value = "查询作者")
+    public abstract ResponseResult findAuthorByUserId(Integer userId);
+
 }

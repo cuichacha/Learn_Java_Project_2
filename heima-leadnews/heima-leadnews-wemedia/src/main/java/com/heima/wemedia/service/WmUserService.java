@@ -16,4 +16,11 @@ public interface WmUserService extends IService<WmUser> {
      * @return
      */
     public abstract ResponseResult saveWmUser(WmUser wmUser);
+
+    /**
+     * 查询自媒体用户
+     * @param name
+     * @return
+     */
+    public abstract ResponseResult findWmUserByName(String name);
 }
