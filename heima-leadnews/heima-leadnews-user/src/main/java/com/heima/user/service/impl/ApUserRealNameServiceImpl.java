@@ -18,8 +18,10 @@ import com.heima.user.mapper.ApUserRealNameMapper;
 import com.heima.user.service.ApUserRealNameService;
 import com.heima.user.service.feign.ArticleFeign;
 import com.heima.user.service.feign.WeMediaFeign;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -64,6 +66,8 @@ public class ApUserRealNameServiceImpl extends ServiceImpl<ApUserRealNameMapper,
     }
 
     @Override
+//    @Transactional(rollbackFor = Exception.class)
+    @GlobalTransactional()
     public ResponseResult updateStatusById(AuthDto authDto, Short status) {
         // 校验参数
         if (authDto == null || authDto.getId() == null) {
@@ -99,7 +103,11 @@ public class ApUserRealNameServiceImpl extends ServiceImpl<ApUserRealNameMapper,
                     apAuthor.setName(name);
                     apAuthor.setType(UserConstants.AUTH_TYPE);
                     apAuthor.setCreatedTime(new Date());
-                    articleFeign.saveAuthor(apAuthor);
+                    ResponseResult saveAuthor = articleFeign.saveAuthor(apAuthor);
+                    Integer saveAuthorCode = saveAuthor.getCode();
+                    if (!saveAuthorCode.equals(AppHttpCodeEnum.SUCCESS.getCode())) {
+                        throw new RuntimeException();
+                    }
                 }
                 // 先判断自媒体是否以及存在于数据库中
                 ResponseResult wmUserResult = weMediaFeign.findByName(name);
@@ -120,7 +128,14 @@ public class ApUserRealNameServiceImpl extends ServiceImpl<ApUserRealNameMapper,
                     wmUser.setPhone(apUser.getPhone());
                     wmUser.setStatus(status.intValue());
                     wmUser.setCreatedTime(new Date());
-                    weMediaFeign.saveWmUser(wmUser);
+                    ResponseResult saveWmUser = weMediaFeign.saveWmUser(wmUser);
+                    Integer saveWmUserCode = saveWmUser.getCode();
+                    if (saveWmUserCode.equals(AppHttpCodeEnum.SUCCESS.getCode())) {
+                        throw new RuntimeException();
+                    }
+                    // 修改ap_user信息
+                    apUser.setFlag((short) 1);
+                    apUserMapper.updateById(apUser);
                 }
             }
             return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);

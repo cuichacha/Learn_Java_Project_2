@@ -12,6 +12,7 @@ public interface AuthorService extends IService<ApAuthor> {
 
     /**
      * 保存作者
+     *
      * @param apAuthor
      * @return
      */
@@ -19,6 +20,7 @@ public interface AuthorService extends IService<ApAuthor> {
 
     /**
      * 查询作者
+     *
      * @param id
      * @return
      */

@@ -1,6 +1,5 @@
 package com.heima.wemedia.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.heima.model.common.dtos.ResponseResult;
@@ -16,7 +15,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class WmUserServiceImpl extends ServiceImpl<WmUserMapper, WmUser> implements WmUserService {
+
     @Override
+//    @Transactional(rollbackFor = Exception.class)
     public ResponseResult saveWmUser(WmUser wmUser) {
         //校验参数
         if (wmUser == null) {

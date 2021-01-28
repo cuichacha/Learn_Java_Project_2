@@ -1,7 +1,0 @@
-com/heima/model/common/admin/pojos/AdChannel.class
-com/heima/model/common/constants/ESIndexConstants.class
-com/heima/model/common/admin/dtos/ChannelDto.class
-com/heima/model/common/enums/AppHttpCodeEnum.class
-com/heima/model/common/dtos/ResponseResult.class
-com/heima/model/common/dtos/PageResponseResult.class
-com/heima/model/common/dtos/PageRequestDto.class

@@ -6,7 +6,9 @@ import com.heima.article.service.AuthorService;
 import com.heima.model.common.article.pojos.ApAuthor;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author cuichacha
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthorServiceImpl extends ServiceImpl<ArticleMapper, ApAuthor> implements AuthorService {
     @Override
+    //@Transactional(rollbackFor = Exception.class)
     public ResponseResult saveAuthor(ApAuthor apAuthor) {
         // 校验参数
         if (apAuthor == null) {
