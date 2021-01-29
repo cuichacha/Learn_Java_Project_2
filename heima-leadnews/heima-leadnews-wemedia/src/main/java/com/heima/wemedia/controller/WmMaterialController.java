@@ -36,7 +36,7 @@ public class WmMaterialController implements WmMaterialControllerApi {
     @Override
     @GetMapping("/del_picture/{id}")
     public ResponseResult deletePicture(@PathVariable("id") Integer id) {
-        return null;
+        return wmMaterialService.deletePicture(id);
     }
 
     @Override
@@ -50,6 +50,5 @@ public class WmMaterialController implements WmMaterialControllerApi {
     public ResponseResult RemoveFromCollection(@PathVariable("id") Integer cancel) {
         return wmMaterialService.addToOrRemoveFromCollection(cancel, WeMediaContans.CANCEL_COLLECT_MATERIAL);
     }
-
 
 }
