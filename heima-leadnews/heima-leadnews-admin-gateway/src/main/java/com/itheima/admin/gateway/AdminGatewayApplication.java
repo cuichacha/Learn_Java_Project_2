@@ -1,19 +1,17 @@
-package com.heima.wemedia;
+package com.itheima.admin.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
  * @author cuichacha
- * @date 1/27/21 18:27
+ * @date 1/25/21 19:18
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-@ServletComponentScan
-public class WeMediaApplication {
+public class AdminGatewayApplication {
     public static void main(String[] args) {
-        SpringApplication.run(WeMediaApplication.class, args);
+        SpringApplication.run(AdminGatewayApplication.class, args);
     }
 }

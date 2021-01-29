@@ -2,6 +2,7 @@ package com.heima.wemedia.controller;
 
 import com.heima.apis.wemedia.WmUserControllerApi;
 import com.heima.model.common.dtos.ResponseResult;
+import com.heima.model.common.wemedia.dtos.WmUserDto;
 import com.heima.model.common.wemedia.pojos.WmUser;
 import com.heima.wemedia.service.WmUserService;
 import org.springframework.beans.factory.annotation.Autowired;

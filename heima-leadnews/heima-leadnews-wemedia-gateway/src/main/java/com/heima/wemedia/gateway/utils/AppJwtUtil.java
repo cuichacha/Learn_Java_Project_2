@@ -1,4 +1,4 @@
-package com.itheima.admin.gateway.utils;
+package com.heima.wemedia.gateway.utils;
 
 import io.jsonwebtoken.*;
 

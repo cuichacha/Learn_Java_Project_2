@@ -1,6 +1,7 @@
 package com.heima.apis.wemedia;
 
 import com.heima.model.common.dtos.ResponseResult;
+import com.heima.model.common.wemedia.dtos.WmUserDto;
 import com.heima.model.common.wemedia.pojos.WmUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,5 +27,5 @@ public interface WmUserControllerApi {
      * @return
      */
     @ApiOperation(value = "查询自媒体用户")
-    public ResponseResult findWmUserByName(String name);
+    public abstract ResponseResult findWmUserByName(String name);
 }

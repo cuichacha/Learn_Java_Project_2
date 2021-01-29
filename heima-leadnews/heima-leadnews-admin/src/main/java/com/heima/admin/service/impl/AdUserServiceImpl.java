@@ -1,9 +1,7 @@
 package com.heima.admin.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.common.collect.Maps;
 import com.heima.admin.mapper.AdUserMapper;
 import com.heima.admin.service.AdUserService;
 import com.heima.model.common.admin.dtos.AdUserDto;
@@ -11,8 +9,6 @@ import com.heima.model.common.admin.pojos.AdUser;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
 import com.heima.utils.common.AppJwtUtil;
-import com.heima.utils.common.BCrypt;
-import io.jsonwebtoken.JwtBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;

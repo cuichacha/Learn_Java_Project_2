@@ -2,6 +2,7 @@ package com.heima.wemedia.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.heima.model.common.dtos.ResponseResult;
+import com.heima.model.common.wemedia.dtos.WmUserDto;
 import com.heima.model.common.wemedia.pojos.WmUser;
 
 /**
@@ -23,4 +24,11 @@ public interface WmUserService extends IService<WmUser> {
      * @return
      */
     public abstract ResponseResult findWmUserByName(String name);
+
+    /**
+     * 自媒体用户登录
+     * @param wmUserDto
+     * @return
+     */
+    public abstract ResponseResult wmUserLogin(WmUserDto wmUserDto);
 }
