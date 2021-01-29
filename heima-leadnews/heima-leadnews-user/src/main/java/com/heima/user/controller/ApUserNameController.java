@@ -1,7 +1,7 @@
 package com.heima.user.controller;
 
 import com.heima.apis.user.ApUserRealNameControllerApi;
-import com.heima.common.constants.UserConstants;
+import com.heima.common.constants.user.UserConstants;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.user.dtos.AuthDto;
 import com.heima.user.service.ApUserRealNameService;

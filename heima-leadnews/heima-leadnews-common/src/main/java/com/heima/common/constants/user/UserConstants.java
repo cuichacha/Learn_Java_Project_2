@@ -1,4 +1,4 @@
-package com.heima.common.constants;
+package com.heima.common.constants.user;
 
 /**
  * @author cuichacha
