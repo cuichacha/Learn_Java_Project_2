@@ -138,7 +138,6 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
 
         operateImages(coverImageUrls, contentImageUrls, wmNews, newsId, userId);
 
-
         return new ResponseResult();
     }
 
@@ -218,7 +217,15 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         if (id == null) {
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
-        return null;
+        // 检查数据
+        WmNews wmNews = getById(id);
+        if (wmNews == null) {
+            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST, "文章不存在");
+        }
+        // 返回数据
+        ResponseResult responseResult = ResponseResult.okResult(wmNews);
+        responseResult.setHost(fileServerUrl);
+        return responseResult;
     }
 
     @Override
@@ -227,7 +234,25 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         if (id == null) {
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
-        return null;
+        // 检查数据
+        WmNews wmNews = getById(id);
+        if (wmNews == null) {
+            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST, "文章不存在");
+        }
+        // 已发布不能删除
+        if (wmNews.getStatus().equals(WmNews.Status.PUBLISHED.getCode()) && wmNews.getEnable().equals(WeMediaConstants.WM_NEWS_ENABLE_UP)) {
+            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST, "文章已发布，不能删除");
+        }
+        // 删除关联信息
+        LambdaUpdateWrapper<WmNewsMaterial> lambdaQueryWrapper = new LambdaUpdateWrapper<>();
+        lambdaQueryWrapper.eq(WmNewsMaterial::getNewsId, wmNews.getId());
+        wmNewsMaterialMapper.delete(lambdaQueryWrapper);
+        // 删除数据
+        boolean result = removeById(id);
+        if (result) {
+            return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
+        }
+        return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
     }
 
     @Override
@@ -236,6 +261,24 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         if (wmNewsDto == null) {
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
-        return null;
+        // 检查数据
+        WmNews wmNews = getById(wmNewsDto.getId());
+        if (wmNews == null) {
+            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST, "文章不存在");
+        }
+        // 非发布状态不能上下架
+        if (!wmNews.getStatus().equals(WmNews.Status.PUBLISHED.getCode())) {
+            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST, "当前文章不是发布状态，不能上下架");
+        }
+        // 修改状态
+        if (wmNewsDto.getEnable() != null && wmNewsDto.getEnable() > -1 && wmNewsDto.getEnable() < 2) {
+            LambdaUpdateWrapper<WmNews> lambdaQueryWrapper = new LambdaUpdateWrapper<>();
+            lambdaQueryWrapper.eq(WmNews::getId, wmNews.getId()).set(WmNews::getEnable, wmNews.getEnable());
+            boolean result = update(lambdaQueryWrapper);
+            if (result) {
+                return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
+            }
+        }
+        return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
     }
 }

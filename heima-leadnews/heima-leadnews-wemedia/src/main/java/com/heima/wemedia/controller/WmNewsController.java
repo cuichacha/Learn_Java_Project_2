@@ -7,10 +7,7 @@ import com.heima.model.common.wemedia.dtos.WmNewsPageDto;
 import com.heima.model.common.wemedia.pojos.WmNews;
 import com.heima.wemedia.service.WmNewsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author cuichacha
@@ -25,7 +22,7 @@ public class WmNewsController implements WmNewsControllerApi {
 
     @Override
     @PostMapping("/list")
-    public ResponseResult WmNewsList(@RequestBody WmNewsPageDto wmNewsPageDto) {
+    public ResponseResult wmNewsList(@RequestBody WmNewsPageDto wmNewsPageDto) {
         return wmNewsService.WmNewsList(wmNewsPageDto);
     }
 
@@ -40,17 +37,20 @@ public class WmNewsController implements WmNewsControllerApi {
     }
 
     @Override
-    public ResponseResult findNewsById(Integer id) {
-        return null;
+    @GetMapping("/one/{id}")
+    public ResponseResult findNewsById(@PathVariable("id") Integer id) {
+        return wmNewsService.findNewsById(id);
     }
 
     @Override
-    public ResponseResult deleteNews(Integer id) {
-        return null;
+    @GetMapping("/del_news/{id}")
+    public ResponseResult deleteNews(@PathVariable("id") Integer id) {
+        return wmNewsService.deleteNews(id);
     }
 
     @Override
-    public ResponseResult publishOrWithdrawNews(WmNewsDto wmNewsDto) {
-        return null;
+    @PostMapping("/down_or_up")
+    public ResponseResult publishOrWithdrawNews(@RequestBody WmNewsDto wmNewsDto) {
+        return wmNewsService.publishOrWithdrawNews(wmNewsDto);
     }
 }

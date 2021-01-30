@@ -19,7 +19,7 @@ public interface WmNewsControllerApi {
      * @return
      */
     @ApiOperation(value = "自媒体文章列表")
-    public abstract ResponseResult WmNewsList(WmNewsPageDto wmNewsPageDto);
+    public abstract ResponseResult wmNewsList(WmNewsPageDto wmNewsPageDto);
 
     /**
      * 发布、修改、保存草稿自媒体文章
