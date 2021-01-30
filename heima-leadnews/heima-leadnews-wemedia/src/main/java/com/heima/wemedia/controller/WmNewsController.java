@@ -4,6 +4,7 @@ import com.heima.apis.wemedia.WmNewsControllerApi;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.wemedia.dtos.WmNewsDto;
 import com.heima.model.common.wemedia.dtos.WmNewsPageDto;
+import com.heima.model.common.wemedia.pojos.WmNews;
 import com.heima.wemedia.service.WmNewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +32,11 @@ public class WmNewsController implements WmNewsControllerApi {
     @Override
     @PostMapping("/submit")
     public ResponseResult updateNews(@RequestBody WmNewsDto wmNewsDto) {
-        return null;
+        if (wmNewsDto.getStatus().equals(WmNews.Status.SUBMIT.getCode())) {
+            return wmNewsService.updateNews(wmNewsDto, WmNews.Status.SUBMIT.getCode());
+        } else {
+            return wmNewsService.updateNews(wmNewsDto, WmNews.Status.NORMAL.getCode());
+        }
     }
 
     @Override
