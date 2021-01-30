@@ -23,6 +23,13 @@ public interface AdChannelControllerApi {
     public abstract ResponseResult findChannelsByNameAndPage(ChannelDto channelDto);
 
     /**
+     * 查询频道列表
+     * @return
+     */
+    @ApiOperation("查询频道列表")
+    public abstract ResponseResult findChannelList();
+
+    /**
      * controller层，新建频道API的，父接口
      * @param adChannel
      * @return

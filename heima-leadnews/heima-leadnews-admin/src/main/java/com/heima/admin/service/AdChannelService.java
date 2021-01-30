@@ -19,6 +19,12 @@ public interface AdChannelService extends IService<AdChannel> {
     public abstract ResponseResult findChannelsByNameAndPage(ChannelDto dto);
 
     /**
+     * 查询频道列表
+     * @return
+     */
+    public abstract ResponseResult findChannelList();
+
+    /**
      * 新建频道
      * @param adChannel
      * @return

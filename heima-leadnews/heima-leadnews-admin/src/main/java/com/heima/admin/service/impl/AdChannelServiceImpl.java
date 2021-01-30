@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author cuichacha
@@ -65,6 +66,12 @@ public class AdChannelServiceImpl extends ServiceImpl<AdChannelMapper, AdChannel
         responseResult.setData(adChannelPage.getRecords());
 
         return responseResult;
+    }
+
+    @Override
+    public ResponseResult findChannelList() {
+        List<AdChannel> adChannelList = list();
+        return ResponseResult.okResult(adChannelList);
     }
 
     @Override

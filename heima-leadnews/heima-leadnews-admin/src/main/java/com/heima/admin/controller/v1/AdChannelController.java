@@ -26,6 +26,12 @@ public class AdChannelController implements AdChannelControllerApi {
     }
 
     @Override
+    @GetMapping("/channels")
+    public ResponseResult findChannelList() {
+        return adChannelService.findChannelList();
+    }
+
+    @Override
     @PostMapping("/save")
     public ResponseResult addChannel(AdChannel adChannel) {
         return adChannelService.addChannels(adChannel);

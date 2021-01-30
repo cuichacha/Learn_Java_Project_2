@@ -1,7 +1,7 @@
 package com.heima.wemedia.controller;
 
 import com.heima.apis.wemedia.WmMaterialControllerApi;
-import com.heima.common.constants.wemedia.WeMediaContans;
+import com.heima.common.constants.wemedia.WeMediaConstants;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.wemedia.dtos.WmMaterialDto;
 import com.heima.wemedia.service.WmMaterialService;
@@ -42,13 +42,13 @@ public class WmMaterialController implements WmMaterialControllerApi {
     @Override
     @GetMapping("/collect/{id}")
     public ResponseResult addToCollection(@PathVariable("id") Integer add) {
-        return wmMaterialService.addToOrRemoveFromCollection(add, WeMediaContans.COLLECT_MATERIAL);
+        return wmMaterialService.addToOrRemoveFromCollection(add, WeMediaConstants.COLLECT_MATERIAL);
     }
 
     @Override
     @GetMapping("/cancel_collect/{id}")
     public ResponseResult RemoveFromCollection(@PathVariable("id") Integer cancel) {
-        return wmMaterialService.addToOrRemoveFromCollection(cancel, WeMediaContans.CANCEL_COLLECT_MATERIAL);
+        return wmMaterialService.addToOrRemoveFromCollection(cancel, WeMediaConstants.CANCEL_COLLECT_MATERIAL);
     }
 
 }
