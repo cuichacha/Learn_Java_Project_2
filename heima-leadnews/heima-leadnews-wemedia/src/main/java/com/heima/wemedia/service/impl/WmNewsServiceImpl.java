@@ -1,7 +1,6 @@
 package com.heima.wemedia.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -96,6 +95,7 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResponseResult updateNews(WmNewsDto wmNewsDto, Short saveType) {
         // 检查参数
         if (wmNewsDto == null) {
@@ -123,7 +123,7 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
             wmNews.setSubmittedTime(new Date());
         }
         wmNews.setEnable(wmNews.getEnable());
-        // 处理封面图片，处理文章图片
+        // 获得封面图片集合，获得文章图片集合
         List<String> coverImageUrls = wmNewsDto.getImages();
         String content = wmNewsDto.getContent();
         List<Map> materials = JSON.parseArray(content, Map.class);
@@ -135,21 +135,21 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
                 contentImageUrls.add(imgUrl);
             }
         }
-
-        operateImages(coverImageUrls, contentImageUrls, wmNews, newsId, userId);
-
+        // 处理封面图片与文章图片
+        operateImageUrlsAndSaveWmNEws(coverImageUrls, contentImageUrls, wmNews, newsId, userId);
+        // 返回结果
         return new ResponseResult();
     }
 
-    private void operateImages(List<String> coverImageUrls, List<String> contentImageUrls, WmNews wmNews, Integer newsId, Integer userId) {
-        // 修改图片连接
+    private void operateImageUrlsAndSaveWmNEws(List<String> coverImageUrls, List<String> contentImageUrls, WmNews wmNews, Integer newsId, Integer userId) {
+        // 修改封面图片连接
         coverImageUrls = coverImageUrls.stream().map(new Function<String, String>() {
             @Override
             public String apply(String s) {
                 return s.replace(fileServerUrl, "");
             }
         }).collect(Collectors.toList());
-
+        // 修改内容图片连接
         contentImageUrls = contentImageUrls.stream().map(new Function<String, String>() {
             @Override
             public String apply(String s) {
@@ -157,29 +157,32 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
             }
         }).collect(Collectors.toList());
 
-        // 判断保存或修改
+        // 合并两个链接并修改链接字符串
         List<String> imageUrls = new ArrayList<>(coverImageUrls);
         imageUrls.addAll(contentImageUrls);
         String replace = imageUrls.toString().replace("[", "").replace("]", "").replace(" ", "");
-        // 判断是修改还是新增，二者只能执行一个！！
+        // 判断是修改还是保存，二者只能执行一个！！
         if (newsId != null) {
             // 先删除关联关系
             LambdaQueryWrapper<WmNewsMaterial> lambdaQueryWrapper = new LambdaQueryWrapper<>();
             lambdaQueryWrapper.eq(WmNewsMaterial::getNewsId, newsId);
             wmNewsMaterialMapper.delete(lambdaQueryWrapper);
+            // 把图片链接存入表中
             wmNews.setImages(replace);
+            // 设置对象id
             wmNews.setId(newsId);
+            // 更新表记录数据
             updateById(wmNews);
-            saveImages(coverImageUrls, contentImageUrls, wmNews);
-            coverImageUrls.addAll(contentImageUrls);
+            // 新增关系表记录
+            saveImagesMaterialRelation(coverImageUrls, contentImageUrls, wmNews);
         } else {
             wmNews.setImages(replace);
             save(wmNews);
-            saveImages(coverImageUrls, contentImageUrls, wmNews);
+            saveImagesMaterialRelation(coverImageUrls, contentImageUrls, wmNews);
         }
     }
 
-    private void saveImages(List<String> coverImageUrls, List<String> contentImageUrls, WmNews wmNews) {
+    private void saveImagesMaterialRelation(List<String> coverImageUrls, List<String> contentImageUrls, WmNews wmNews) {
         // 查询已保存封面图片
         LambdaUpdateWrapper<WmMaterial> lambdaQueryWrapper1 = new LambdaUpdateWrapper<>();
         lambdaQueryWrapper1.in(WmMaterial::getUrl, coverImageUrls);
