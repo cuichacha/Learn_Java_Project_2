@@ -21,7 +21,10 @@ public class ApArticleContentController implements ApArticleContentControllerApi
     @PostMapping("/save")
     @Override
     public ResponseResult saveArticleContent(@RequestBody ApArticleContent apArticleContent) {
-        apArticleContentService.save(apArticleContent);
-        return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
+        boolean result = apArticleContentService.save(apArticleContent);
+        if (result) {
+            return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
+        }
+        return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
     }
 }

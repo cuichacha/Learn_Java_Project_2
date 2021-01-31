@@ -21,7 +21,10 @@ public class ApArticleConfigController implements ApArticleConfigControllerApi {
     @PostMapping("/save")
     @Override
     public ResponseResult saveArticleConfig(@RequestBody ApArticleConfig apArticleConfig) {
-        apArticleConfigService.save(apArticleConfig);
-        return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
+        boolean result = apArticleConfigService.save(apArticleConfig);
+        if (result) {
+            return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
+        }
+        return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
     }
 }

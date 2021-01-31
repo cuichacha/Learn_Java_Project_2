@@ -142,12 +142,12 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
             }
         }
         // 处理封面图片与文章图片
-        operateImageUrlsAndSaveWmNEws(coverImageUrls, contentImageUrls, wmNews, newsId, userId);
+        operateImageUrlsAndSaveWmNews(coverImageUrls, contentImageUrls, wmNews, newsId, userId);
         // 返回结果
         return new ResponseResult();
     }
 
-    private void operateImageUrlsAndSaveWmNEws(List<String> coverImageUrls, List<String> contentImageUrls, WmNews wmNews, Integer newsId, Integer userId) {
+    private void operateImageUrlsAndSaveWmNews(List<String> coverImageUrls, List<String> contentImageUrls, WmNews wmNews, Integer newsId, Integer userId) {
         // 修改封面图片连接
         coverImageUrls = coverImageUrls.stream().map(new Function<String, String>() {
             @Override
@@ -183,12 +183,12 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
             saveImagesMaterialRelation(coverImageUrls, contentImageUrls, wmNews);
         } else {
             wmNews.setImages(replace);
-            boolean saveNews = save(wmNews);
-            // 发送Kafka消息
-            if (saveNews) {
-                kafkaTemplate.send(NewsAutoScanConstants.WM_NEWS_AUTO_SCAN_TOPIC, JSON.toJSONString(wmNews.getId()));
-            }
+            save(wmNews);
             saveImagesMaterialRelation(coverImageUrls, contentImageUrls, wmNews);
+        }
+        if (!wmNews.getStatus().equals(WmNews.Status.NORMAL.getCode())) {
+            // 发送Kafka消息
+            kafkaTemplate.send(NewsAutoScanConstants.WM_NEWS_AUTO_SCAN_TOPIC, JSON.toJSONString(wmNews.getId()));
         }
     }
 
