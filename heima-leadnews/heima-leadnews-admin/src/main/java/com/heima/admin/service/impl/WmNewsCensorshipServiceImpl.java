@@ -20,6 +20,7 @@ import com.heima.model.common.wemedia.pojos.WmUser;
 import com.heima.utils.common.SensitiveWordUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -49,6 +50,8 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
     @Autowired
     private AdSensitiveMapper adSensitiveMapper;
 
+    private Integer authorId;
+
     @Override
     public void censorByWmNewsId(Integer id) {
         // 校验参数
@@ -60,6 +63,7 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
         // 远程调用获取文章对象
         ResponseResult wmNewsByFeign = weMediaFeign.findById(id);
         WmNews wmNews = (WmNews) wmNewsByFeign.getData();
+//        WmNews wmNews = weMediaFeign.findById(id);
         if (wmNews == null) {
             log.error("审核的自媒体文章不存在，自媒体的id:{}", id);
             throw new RuntimeException("审核的自媒体文章不存在");
@@ -70,10 +74,10 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
 
         // 文章状态为4，人工审核通过
         if (status.equals(WmNews.Status.ADMIN_SUCCESS.getCode())) {
-            // 修改文章状态
-            updateWmNews(wmNews, WmNews.Status.PUBLISHED.getCode(), "审核通过");
             // 保存数据
             saveData(wmNews);
+            // 修改文章状态
+            updateWmNews(wmNews, WmNews.Status.PUBLISHED.getCode(), "审核通过");
             // 结束方法，不再向后执行
             return;
         }
@@ -85,10 +89,10 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
                 // 大于当前时间，直接保存
                 saveData(wmNews);
             } else {
-                // 小于当前时间，修改文章状态，改为已发布
-                updateWmNews(wmNews, WmNews.Status.PUBLISHED.getCode(), "审核通过");
                 // 保存数据
                 saveData(wmNews);
+                // 小于当前时间，修改文章状态，改为已发布
+                updateWmNews(wmNews, WmNews.Status.PUBLISHED.getCode(), "审核通过");
             }
             return;
         }
@@ -171,27 +175,29 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
             return;
         }
         // 审核通过，更新文章状态
+        saveData(wmNews);
+
         if (wmNews.getPublishTime().getTime() > System.currentTimeMillis()) {
             updateWmNews(wmNews, WmNews.Status.SUCCESS.getCode(), "审核通过");
         } else {
             updateWmNews(wmNews, WmNews.Status.PUBLISHED.getCode(), "审核通过");
         }
-        saveData(wmNews);
-
     }
 
     private void saveData(WmNews wmNews) {
         // 向article表中插入数据
         saveApArticle(wmNews);
-        // 向article_config表中插入数据
-        saveApArticleConfig(wmNews);
+        // 获取ArticleID
+        Long articleId = getArticleId(wmNews);
         // 向article_content表中插入数据
-        saveApArticleContent(wmNews);
+        saveApArticleContent(wmNews, articleId);
+        // 向article_config表中插入数据
+        saveApArticleConfig(articleId);
     }
 
     private void saveApArticle(WmNews wmNews) {
         ApArticle apArticle = new ApArticle();
-        apArticle.setId(wmNews.getArticleId());
+        // apArticle.setId(wmNews.getArticleId());
         apArticle.setTitle(wmNews.getTitle());
         // 查询wmUser
         Integer userId = wmNews.getUserId();
@@ -201,7 +207,10 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
             log.error("远程调用查询WmUser对象发生异常");
             throw new RuntimeException("远程调用查询WmUser对象发生异常");
         }
-        apArticle.setAuthorId(wmUser.getApAuthorId());
+        // 保存AuthorID
+        Integer apAuthorId = wmUser.getApAuthorId();
+        authorId = apAuthorId;
+        apArticle.setAuthorId(apAuthorId);
         apArticle.setAuthorName(wmUser.getName());
         // 查询频道
         Integer channelId = wmNews.getChannelId();
@@ -224,9 +233,33 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
         }
     }
 
-    private void saveApArticleConfig(WmNews wmNews) {
+    private Long getArticleId(WmNews wmNews) {
+        String title = wmNews.getTitle();
+        ResponseResult responseResult = articleFeign.findArticleByNameAndAuthorId(title, authorId);
+        ApArticle apArticle = (ApArticle) responseResult.getData();
+        if (apArticle == null) {
+            log.error("文章查询失败");
+            throw new RuntimeException("文章查询失败");
+        }
+        return apArticle.getId();
+    }
+
+    private void saveApArticleContent(WmNews wmNews, Long articleId) {
+        ApArticleContent apArticleContent = new ApArticleContent();
+//        apArticleContent.setArticleId(wmNews.getArticleId());
+        apArticleContent.setArticleId(articleId);
+        apArticleContent.setContent(wmNews.getContent());
+        ResponseResult saveArticleContentResult = articleFeign.saveArticleContent(apArticleContent);
+        if (!saveArticleContentResult.getCode().equals(AppHttpCodeEnum.SUCCESS.getCode())) {
+            log.error("远程调用保存ApArticleContent对象发生异常");
+            throw new RuntimeException("远程调用保存ApArticleContent对象发生异常");
+        }
+    }
+
+    private void saveApArticleConfig(Long articleId) {
         ApArticleConfig apArticleConfig = new ApArticleConfig();
-        apArticleConfig.setArticleId(wmNews.getArticleId());
+//        apArticleConfig.setArticleId(wmNews.getArticleId());
+        apArticleConfig.setArticleId(articleId);
         apArticleConfig.setIsForward(true);
         apArticleConfig.setIsDelete(false);
         apArticleConfig.setIsDown(true);
@@ -235,17 +268,6 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
         if (!saveArticleConfigResult.getCode().equals(AppHttpCodeEnum.SUCCESS.getCode())) {
             log.error("远程调用保存ApArticleConfig对象发生异常");
             throw new RuntimeException("远程调用保存ApArticleConfig对象发生异常");
-        }
-    }
-
-    private void saveApArticleContent(WmNews wmNews) {
-        ApArticleContent apArticleContent = new ApArticleContent();
-        apArticleContent.setArticleId(wmNews.getArticleId());
-        apArticleContent.setContent(wmNews.getContent());
-        ResponseResult saveArticleContentResult = articleFeign.saveArticleContent(apArticleContent);
-        if (!saveArticleContentResult.getCode().equals(AppHttpCodeEnum.SUCCESS.getCode())) {
-            log.error("远程调用保存ApArticleContent对象发生异常");
-            throw new RuntimeException("远程调用保存ApArticleContent对象发生异常");
         }
     }
 

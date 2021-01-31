@@ -4,7 +4,6 @@ package com.heima.admin.feign;
 import com.heima.model.common.article.pojos.ApArticle;
 import com.heima.model.common.article.pojos.ApArticleConfig;
 import com.heima.model.common.article.pojos.ApArticleContent;
-import com.heima.model.common.article.pojos.ApAuthor;
 import com.heima.model.common.dtos.ResponseResult;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +15,7 @@ public interface ArticleFeign {
 
     /**
      * 保存文章(远程调用)
+     *
      * @param apArticle
      * @return
      */
@@ -24,6 +24,7 @@ public interface ArticleFeign {
 
     /**
      * 保存文章设置(远程调用)
+     *
      * @param apArticleConfig
      * @return
      */
@@ -32,6 +33,7 @@ public interface ArticleFeign {
 
     /**
      * 保存文章内容(远程调用)
+     *
      * @param apArticleContent
      * @return
      */
@@ -40,9 +42,20 @@ public interface ArticleFeign {
 
     /**
      * 根据名称查询作者(远程调用)
+     *
      * @param name
      * @return
      */
     @GetMapping("/api/v1/author/findByName/{name}")
     public ResponseResult findAuthorByName(@PathVariable("name") String name);
+
+    /**
+     * 根据文章名称和作者id查询文章(远程调用)
+     *
+     * @param title
+     * @param authorId
+     * @return
+     */
+    @GetMapping("/api/v1/article/findByNameAndAuthorId")
+    public ResponseResult findArticleByNameAndAuthorId(String title, Integer authorId);
 }

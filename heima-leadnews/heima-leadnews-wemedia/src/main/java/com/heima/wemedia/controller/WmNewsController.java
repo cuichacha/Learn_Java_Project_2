@@ -61,6 +61,7 @@ public class WmNewsController implements WmNewsControllerApi {
             return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST);
         }
         return ResponseResult.okResult(wmNews);
+//        return wmNews;
     }
 
     @Override
