@@ -122,6 +122,7 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
             wmNews.setStatus(WmNews.Status.SUBMIT.getCode());
             wmNews.setSubmittedTime(new Date());
         }
+        wmNews.setPublishTime(wmNewsDto.getPublishTime());
         wmNews.setEnable(wmNews.getEnable());
         // 获得封面图片集合，获得文章图片集合
         List<String> coverImageUrls = wmNewsDto.getImages();
