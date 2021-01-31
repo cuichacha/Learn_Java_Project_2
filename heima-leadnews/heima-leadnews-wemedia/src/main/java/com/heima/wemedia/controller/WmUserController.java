@@ -2,6 +2,7 @@ package com.heima.wemedia.controller;
 
 import com.heima.apis.wemedia.WmUserControllerApi;
 import com.heima.model.common.dtos.ResponseResult;
+import com.heima.model.common.enums.AppHttpCodeEnum;
 import com.heima.model.common.wemedia.dtos.WmUserDto;
 import com.heima.model.common.wemedia.pojos.WmUser;
 import com.heima.wemedia.service.WmUserService;
@@ -29,5 +30,15 @@ public class WmUserController implements WmUserControllerApi {
     @GetMapping("/findByName/{name}")
     public ResponseResult findWmUserByName(@PathVariable("name") String name) {
         return wmUserService.findWmUserByName(name);
+    }
+
+    @Override
+    @GetMapping("/findOne/{id}")
+    public ResponseResult findWmUserById(@PathVariable("id") Integer id) {
+        WmUser wmUser = wmUserService.getById(id);
+        if (wmUser == null) {
+            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST);
+        }
+        return ResponseResult.okResult(wmUser);
     }
 }

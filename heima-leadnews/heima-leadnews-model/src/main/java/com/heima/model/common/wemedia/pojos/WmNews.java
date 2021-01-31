@@ -100,7 +100,7 @@ public class WmNews {
     /**
      * 发布库文章ID
      */
-    @TableField("article_id")
+    @TableId(value = "article_id",type = IdType.ID_WORKER)
     private Long articleId;
 
     /**

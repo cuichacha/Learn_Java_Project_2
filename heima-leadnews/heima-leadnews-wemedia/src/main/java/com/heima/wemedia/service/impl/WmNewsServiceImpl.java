@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.heima.common.constants.wemedia.WeMediaConstants;
+import com.heima.common.message.NewsAutoScanConstants;
 import com.heima.model.common.dtos.PageResponseResult;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
@@ -23,6 +24,7 @@ import com.heima.wemedia.mapper.WmNewsMaterialMapper;
 import com.heima.wemedia.service.WmNewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +47,9 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
 
     @Autowired
     private WmNewsMaterialMapper wmNewsMaterialMapper;
+
+    @Autowired
+    private KafkaTemplate kafkaTemplate;
 
     @Override
     public ResponseResult WmNewsList(WmNewsPageDto wmNewsPageDto) {
@@ -178,7 +183,11 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
             saveImagesMaterialRelation(coverImageUrls, contentImageUrls, wmNews);
         } else {
             wmNews.setImages(replace);
-            save(wmNews);
+            boolean saveNews = save(wmNews);
+            // 发送Kafka消息
+            if (saveNews) {
+                kafkaTemplate.send(NewsAutoScanConstants.WM_NEWS_AUTO_SCAN_TOPIC, JSON.toJSONString(wmNews.getId()));
+            }
             saveImagesMaterialRelation(coverImageUrls, contentImageUrls, wmNews);
         }
     }

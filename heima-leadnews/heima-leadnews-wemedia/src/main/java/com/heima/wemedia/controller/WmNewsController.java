@@ -2,6 +2,7 @@ package com.heima.wemedia.controller;
 
 import com.heima.apis.wemedia.WmNewsControllerApi;
 import com.heima.model.common.dtos.ResponseResult;
+import com.heima.model.common.enums.AppHttpCodeEnum;
 import com.heima.model.common.wemedia.dtos.WmNewsDto;
 import com.heima.model.common.wemedia.dtos.WmNewsPageDto;
 import com.heima.model.common.wemedia.pojos.WmNews;
@@ -37,9 +38,29 @@ public class WmNewsController implements WmNewsControllerApi {
     }
 
     @Override
+    @PostMapping("/update")
+    public ResponseResult updateWmNews(@RequestBody WmNews wmNews) {
+        boolean result = wmNewsService.updateById(wmNews);
+        if (result) {
+            return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
+        }
+        return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
+    }
+
+    @Override
     @GetMapping("/one/{id}")
     public ResponseResult findNewsById(@PathVariable("id") Integer id) {
         return wmNewsService.findNewsById(id);
+    }
+
+    @Override
+    @GetMapping("/findOne/{id}")
+    public ResponseResult findById(@PathVariable("id") Integer id) {
+        WmNews wmNews = wmNewsService.getById(id);
+        if (wmNews == null) {
+            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST);
+        }
+        return ResponseResult.okResult(wmNews);
     }
 
     @Override

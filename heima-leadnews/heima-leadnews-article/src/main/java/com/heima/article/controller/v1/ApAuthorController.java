@@ -1,7 +1,7 @@
-package com.heima.article.controller;
+package com.heima.article.controller.v1;
 
-import com.heima.apis.article.AuthorControllerApi;
-import com.heima.article.service.AuthorService;
+import com.heima.apis.article.ApAuthorControllerApi;
+import com.heima.article.service.ApAuthorService;
 import com.heima.model.common.article.pojos.ApAuthor;
 import com.heima.model.common.dtos.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,20 +13,26 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/v1/author")
-public class AuthorController implements AuthorControllerApi {
+public class ApAuthorController implements ApAuthorControllerApi {
 
     @Autowired
-    private AuthorService authorService;
+    private ApAuthorService apAuthorService;
 
     @Override
     @PostMapping("/save")
     public ResponseResult saveAuthor(@RequestBody ApAuthor apAuthor) {
-        return authorService.saveAuthor(apAuthor);
+        return apAuthorService.saveAuthor(apAuthor);
     }
 
     @Override
     @GetMapping("/findByUserId/{id}")
     public ResponseResult findAuthorByUserId(@PathVariable("id") Integer userId) {
-        return authorService.findAuthorByUserId(userId);
+        return apAuthorService.findAuthorByUserId(userId);
+    }
+
+    @Override
+    @GetMapping("/findByName/{name}")
+    public ResponseResult findAuthorByName(@PathVariable("name") String name) {
+        return apAuthorService.findAuthorByName(name);
     }
 }

@@ -28,4 +28,14 @@ public interface WmUserControllerApi {
      */
     @ApiOperation(value = "查询自媒体用户")
     public abstract ResponseResult findWmUserByName(String name);
+
+    /**
+     * 根据ID查询用户(远程调用)
+     * @param id
+     * @return
+     */
+    @ApiOperation(value = "查询自媒体用户(远程调用)")
+    public abstract ResponseResult findWmUserById(Integer id);
+
+
 }
