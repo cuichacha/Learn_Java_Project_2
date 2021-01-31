@@ -2,6 +2,7 @@ package com.heima.wemedia.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -95,7 +96,6 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public ResponseResult updateNews(WmNewsDto wmNewsDto, Short saveType) {
         // 检查参数
         if (wmNewsDto == null) {
@@ -160,24 +160,26 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         // 判断保存或修改
         List<String> imageUrls = new ArrayList<>(coverImageUrls);
         imageUrls.addAll(contentImageUrls);
-        String replace = imageUrls.toString().replace("[", "").replace("]", "");
+        String replace = imageUrls.toString().replace("[", "").replace("]", "").replace(" ", "");
+        // 判断是修改还是新增，二者只能执行一个！！
         if (newsId != null) {
             // 先删除关联关系
-            LambdaUpdateWrapper<WmNewsMaterial> lambdaQueryWrapper = new LambdaUpdateWrapper<>();
+            LambdaQueryWrapper<WmNewsMaterial> lambdaQueryWrapper = new LambdaQueryWrapper<>();
             lambdaQueryWrapper.eq(WmNewsMaterial::getNewsId, newsId);
             wmNewsMaterialMapper.delete(lambdaQueryWrapper);
             wmNews.setImages(replace);
+            wmNews.setId(newsId);
             updateById(wmNews);
-            saveImages(coverImageUrls, contentImageUrls, wmNews, userId);
+            saveImages(coverImageUrls, contentImageUrls, wmNews);
             coverImageUrls.addAll(contentImageUrls);
-
+        } else {
+            wmNews.setImages(replace);
+            save(wmNews);
+            saveImages(coverImageUrls, contentImageUrls, wmNews);
         }
-        wmNews.setImages(replace);
-        save(wmNews);
-        saveImages(coverImageUrls, contentImageUrls, wmNews, userId);
     }
 
-    private void saveImages(List<String> coverImageUrls, List<String> contentImageUrls, WmNews wmNews, Integer userId) {
+    private void saveImages(List<String> coverImageUrls, List<String> contentImageUrls, WmNews wmNews) {
         // 查询已保存封面图片
         LambdaUpdateWrapper<WmMaterial> lambdaQueryWrapper1 = new LambdaUpdateWrapper<>();
         lambdaQueryWrapper1.in(WmMaterial::getUrl, coverImageUrls);
@@ -244,7 +246,7 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
             return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST, "文章已发布，不能删除");
         }
         // 删除关联信息
-        LambdaUpdateWrapper<WmNewsMaterial> lambdaQueryWrapper = new LambdaUpdateWrapper<>();
+        LambdaQueryWrapper<WmNewsMaterial> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(WmNewsMaterial::getNewsId, wmNews.getId());
         wmNewsMaterialMapper.delete(lambdaQueryWrapper);
         // 删除数据
