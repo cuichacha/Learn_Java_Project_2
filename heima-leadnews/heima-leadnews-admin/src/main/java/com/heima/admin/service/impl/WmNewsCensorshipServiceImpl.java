@@ -18,6 +18,7 @@ import com.heima.model.common.enums.AppHttpCodeEnum;
 import com.heima.model.common.wemedia.pojos.WmNews;
 import com.heima.model.common.wemedia.pojos.WmUser;
 import com.heima.utils.common.SensitiveWordUtil;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,7 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
     private Long articleId;
 
     @Override
+    @GlobalTransactional
     public void censorByWmNewsId(Integer id) {
         // 校验参数
         if (id == null) {
@@ -152,7 +154,7 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
             imageUrls = imageUrls.stream().map(new Function<String, String>() {
                 @Override
                 public String apply(String s) {
-                    s = "http://372j58p076.qicp.vip" + s;
+                    s = "http://372j58p076.qicp.vip/" + s;
                     return s;
                 }
             }).collect(Collectors.toList());
@@ -273,6 +275,9 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
     private void updateWmNews(WmNews wmNews, Short code, String msg) {
         wmNews.setStatus(code);
         wmNews.setReason(msg);
+        if (wmNews.getPublishTime() == null) {
+            wmNews.setPublishTime(new Date());
+        }
         ResponseResult updateWmNewsResult = weMediaFeign.updateWmNews(wmNews);
         if (!updateWmNewsResult.getCode().equals(AppHttpCodeEnum.SUCCESS.getCode())) {
             log.error("远程更新文章状态发生异常");

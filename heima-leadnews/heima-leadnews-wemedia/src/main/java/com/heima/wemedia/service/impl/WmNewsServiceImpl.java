@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.heima.common.constants.wemedia.WeMediaConstants;
+import com.heima.common.message.NewsAutoScanConstants;
 import com.heima.model.common.dtos.PageResponseResult;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
@@ -127,8 +128,8 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
             wmNews.setStatus(WmNews.Status.NORMAL.getCode());
         } else if (saveType.equals(WmNews.Status.SUBMIT.getCode())) {
             wmNews.setStatus(WmNews.Status.SUBMIT.getCode());
-            wmNews.setSubmittedTime(new Date());
         }
+        wmNews.setSubmittedTime(new Date());
         wmNews.setPublishTime(wmNewsDto.getPublishTime());
         wmNews.setEnable(wmNews.getEnable());
         // 获得封面图片集合，获得文章图片集合
@@ -186,14 +187,13 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         } else {
             wmNews.setImages(replace);
             save(wmNews);
-            wmNewsMapper.insert(wmNews);
             if (!coverImageUrls.isEmpty() || !contentImageUrls.isEmpty()) {
                 saveImagesMaterialRelation(coverImageUrls, contentImageUrls, wmNews);
             }
         }
         if (!wmNews.getStatus().equals(WmNews.Status.NORMAL.getCode())) {
             // 发送Kafka消息
-//            kafkaTemplate.send(NewsAutoScanConstants.WM_NEWS_AUTO_SCAN_TOPIC, JSON.toJSONString(wmNews.getId()));
+            kafkaTemplate.send(NewsAutoScanConstants.WM_NEWS_AUTO_SCAN_TOPIC, JSON.toJSONString(wmNews.getId()));
         }
     }
 
