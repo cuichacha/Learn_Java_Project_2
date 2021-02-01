@@ -129,6 +129,8 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         } else if (saveType.equals(WmNews.Status.SUBMIT.getCode())) {
             wmNews.setStatus(WmNews.Status.SUBMIT.getCode());
         }
+        // 审核意见设为空
+        wmNews.setReason(null);
         wmNews.setSubmittedTime(new Date());
         wmNews.setPublishTime(wmNewsDto.getPublishTime());
         wmNews.setEnable(wmNews.getEnable());
