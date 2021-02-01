@@ -29,7 +29,7 @@ public class GreenTextScan {
 
     private String accessKeyId;
     private String secret;
-    private String scenes;
+    private String textScene;
 
     public Map greenTextScan(String content) throws Exception {
         IClientProfile profile = DefaultProfile
@@ -56,7 +56,7 @@ public class GreenTextScan {
         /**
          * 检测场景，文本垃圾检测传递：antispam
          **/
-        data.put("scenes", Arrays.asList(scenes.split(",")));
+        data.put("scenes", Arrays.asList(textScene.split(",")));
         data.put("tasks", tasks);
         System.out.println(JSON.toJSONString(data, true));
         textScanRequest.setHttpContent(data.toJSONString().getBytes("UTF-8"), "UTF-8", FormatType.JSON);

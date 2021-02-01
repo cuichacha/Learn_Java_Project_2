@@ -20,15 +20,4 @@ public interface ApArticleControllerApi {
      */
     @ApiOperation(value = "保存文章(远程调用)")
     public ResponseResult saveApArticle(ApArticle apArticle);
-
-    /**
-     * 根据文章名称和作者id查询文章(远程调用)
-     *
-     * @param title
-     * @param authorId
-     * @return
-     */
-    @ApiOperation(value = "根据文章名称和作者id查询文章(远程调用)")
-    public ResponseResult findArticleByNameAndAuthorId(String title, Integer authorId);
-
 }

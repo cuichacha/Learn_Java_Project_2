@@ -48,14 +48,4 @@ public interface ArticleFeign {
      */
     @GetMapping("/api/v1/author/findByName/{name}")
     public ResponseResult findAuthorByName(@PathVariable("name") String name);
-
-    /**
-     * 根据文章名称和作者id查询文章(远程调用)
-     *
-     * @param title
-     * @param authorId
-     * @return
-     */
-    @GetMapping("/api/v1/article/findByNameAndAuthorId")
-    public ResponseResult findArticleByNameAndAuthorId(String title, Integer authorId);
 }

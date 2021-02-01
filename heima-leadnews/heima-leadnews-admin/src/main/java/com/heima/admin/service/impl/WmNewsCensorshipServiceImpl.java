@@ -19,14 +19,11 @@ import com.heima.model.common.wemedia.pojos.WmNews;
 import com.heima.model.common.wemedia.pojos.WmUser;
 import com.heima.utils.common.SensitiveWordUtil;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -50,7 +47,13 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
     @Autowired
     private AdSensitiveMapper adSensitiveMapper;
 
-    private Integer authorId;
+    @Autowired
+    private GreenTextScan greenTextScan;
+
+    @Autowired
+    private GreenImageScan greenImageScan;
+
+    private Long articleId;
 
     @Override
     public void censorByWmNewsId(Integer id) {
@@ -62,13 +65,14 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
         }
         // 远程调用获取文章对象
         ResponseResult wmNewsByFeign = weMediaFeign.findById(id);
-        WmNews wmNews = (WmNews) wmNewsByFeign.getData();
 //        WmNews wmNews = weMediaFeign.findById(id);
-        if (wmNews == null) {
+        if (!wmNewsByFeign.getCode().equals(AppHttpCodeEnum.SUCCESS.getCode())) {
             log.error("审核的自媒体文章不存在，自媒体的id:{}", id);
             throw new RuntimeException("审核的自媒体文章不存在");
 //            return;
         }
+        Object wmNewsByFeignData = wmNewsByFeign.getData();
+        WmNews wmNews = JSON.parseObject(wmNewsByFeignData.toString(), WmNews.class);
         // 文章状态
         Short status = wmNews.getStatus();
 
@@ -106,78 +110,83 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
 
         // 获取文本内容
         String text = parseText(wmNews);
-        // 获取图片内容
-        String images = wmNews.getImages();
-        String[] split = images.split(",");
-        List<String> imageUrls = Arrays.stream(split).collect(Collectors.toList());
-        imageUrls = imageUrls.stream().map(new Function<String, String>() {
-            @Override
-            public String apply(String s) {
-                s = "http://372j58p076.qicp.vip" + s;
-                return s;
+        if (StringUtils.isNotEmpty(text)) {
+            // 审核文本内容
+            Map textMap = null;
+            try {
+                textMap = greenTextScan.greenTextScan(text);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }).collect(Collectors.toList());
-
-        // 审核文本内容
-        GreenTextScan greenTextScan = new GreenTextScan();
-        Map textMap = new HashMap();
-        try {
-            textMap = greenTextScan.greenTextScan(text);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (textMap == null) {
-            log.error("获取文章文本内容失败");
-            throw new RuntimeException("获取文章文本内容失败");
-        }
-        if (!textMap.get("suggestion").equals(AliyunConstants.PASS)) {
-            // 自动审核不通过
-            if (textMap.get("suggestion").equals(AliyunConstants.BLOCK)) {
+            if (textMap == null) {
+                log.error("自动审核文章文本内容失败");
+                throw new RuntimeException("自动审核文章文本内容失败");
+            }
+            if (!textMap.get("suggestion").equals(AliyunConstants.PASS)) {
+                // 自动审核不通过
+                if (textMap.get("suggestion").equals(AliyunConstants.BLOCK)) {
+                    updateWmNews(wmNews, WmNews.Status.FAIL.getCode(), "文章内容中有敏感词汇");
+                    return;
+                }
+                if (textMap.get("suggestion").equals(AliyunConstants.REVIEW)) {
+                    // 转人工审核
+                    updateWmNews(wmNews, WmNews.Status.ADMIN_AUTH.getCode(), "文章内容中有不确定词汇");
+                    return;
+                }
+            }
+            // 审核自管理敏感词
+            List<String> allSensitive = adSensitiveMapper.findAllSensitive();
+            SensitiveWordUtil.initMap(allSensitive);
+            Map<String, Integer> matchWords = SensitiveWordUtil.matchWords(text);
+            if (matchWords.size() > 0) {
                 updateWmNews(wmNews, WmNews.Status.FAIL.getCode(), "文章内容中有敏感词汇");
                 return;
             }
-            if (textMap.get("suggestion").equals(AliyunConstants.REVIEW)) {
-                // 转人工审核
-                updateWmNews(wmNews, WmNews.Status.ADMIN_AUTH.getCode(), "文章内容中有不确定词汇");
-                return;
+        }
+
+        // 获取图片内容
+        String images = wmNews.getImages();
+        if (StringUtils.isNotEmpty(images)) {
+            String[] split = images.split(",");
+            List<String> imageUrls = Arrays.stream(split).collect(Collectors.toList());
+            imageUrls = imageUrls.stream().map(new Function<String, String>() {
+                @Override
+                public String apply(String s) {
+                    s = "http://372j58p076.qicp.vip" + s;
+                    return s;
+                }
+            }).collect(Collectors.toList());
+
+            // 审核图片
+            Map imagesMap = null;
+            try {
+                imagesMap = greenImageScan.imageScan(imageUrls);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (imagesMap == null) {
+                log.error("自动审核文章图片内容失败");
+                throw new RuntimeException("自动审核文章图片内容失败");
+            }
+            if (!imagesMap.get("suggestion").equals(AliyunConstants.PASS)) {
+                // 自动审核不通过
+                if (imagesMap.get("suggestion").equals(AliyunConstants.BLOCK)) {
+                    updateWmNews(wmNews, WmNews.Status.FAIL.getCode(), "文章内容中有敏感图片");
+                    return;
+                }
+                if (imagesMap.get("suggestion").equals(AliyunConstants.REVIEW)) {
+                    // 转人工审核
+                    updateWmNews(wmNews, WmNews.Status.ADMIN_AUTH.getCode(), "文章内容中有不确定图片");
+                    return;
+                }
             }
         }
-        // 审核图片
-        GreenImageScan greenImageScan = new GreenImageScan();
-        Map imagesMap = null;
-        try {
-            imagesMap = greenImageScan.imageScan(imageUrls);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (imagesMap == null) {
-            log.error("获取文章图片内容失败");
-            throw new RuntimeException("获取文章图片内容失败");
-        }
-        if (!imagesMap.get("suggestion").equals(AliyunConstants.PASS)) {
-            // 自动审核不通过
-            if (imagesMap.get("suggestion").equals(AliyunConstants.BLOCK)) {
-                updateWmNews(wmNews, WmNews.Status.FAIL.getCode(), "文章内容中有敏感图片");
-                return;
-            }
-            if (imagesMap.get("suggestion").equals(AliyunConstants.REVIEW)) {
-                // 转人工审核
-                updateWmNews(wmNews, WmNews.Status.ADMIN_AUTH.getCode(), "文章内容中有不确定图片");
-                return;
-            }
-        }
-        // 审核自管理敏感词
-        List<String> allSensitive = adSensitiveMapper.findAllSensitive();
-        SensitiveWordUtil.initMap(allSensitive);
-        Map<String, Integer> matchWords = SensitiveWordUtil.matchWords(text);
-        if (matchWords.size() > 0) {
-            updateWmNews(wmNews, WmNews.Status.FAIL.getCode(), "文章内容中有敏感词汇");
-            return;
-        }
+
         // 审核通过，更新文章状态
         saveData(wmNews);
 
-        if (wmNews.getPublishTime().getTime() > System.currentTimeMillis()) {
+        Date publishTime = wmNews.getPublishTime();
+        if (publishTime == null || publishTime.getTime() > System.currentTimeMillis()) {
             updateWmNews(wmNews, WmNews.Status.SUCCESS.getCode(), "审核通过");
         } else {
             updateWmNews(wmNews, WmNews.Status.PUBLISHED.getCode(), "审核通过");
@@ -187,8 +196,6 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
     private void saveData(WmNews wmNews) {
         // 向article表中插入数据
         saveApArticle(wmNews);
-        // 获取ArticleID
-        Long articleId = getArticleId(wmNews);
         // 向article_content表中插入数据
         saveApArticleContent(wmNews, articleId);
         // 向article_config表中插入数据
@@ -201,15 +208,16 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
         apArticle.setTitle(wmNews.getTitle());
         // 查询wmUser
         Integer userId = wmNews.getUserId();
-        ResponseResult wmUserById = weMediaFeign.findWmUserById(userId);
-        WmUser wmUser = (WmUser) wmUserById.getData();
-        if (wmUser == null) {
+        ResponseResult wmUserByFeign = weMediaFeign.findWmUserById(userId);
+//        WmUser wmUser = (WmUser) wmUserById.getData();
+        if (!wmUserByFeign.getCode().equals(AppHttpCodeEnum.SUCCESS.getCode())) {
             log.error("远程调用查询WmUser对象发生异常");
             throw new RuntimeException("远程调用查询WmUser对象发生异常");
         }
+        Object wmUserByFeignData = wmUserByFeign.getData();
+        WmUser wmUser = JSON.parseObject(wmUserByFeignData.toString(), WmUser.class);
         // 保存AuthorID
         Integer apAuthorId = wmUser.getApAuthorId();
-        authorId = apAuthorId;
         apArticle.setAuthorId(apAuthorId);
         apArticle.setAuthorName(wmUser.getName());
         // 查询频道
@@ -231,17 +239,8 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
             log.error("远程调用保存ApArticle对象发生异常");
             throw new RuntimeException("远程调用保存ApArticle对象发生异常");
         }
-    }
-
-    private Long getArticleId(WmNews wmNews) {
-        String title = wmNews.getTitle();
-        ResponseResult responseResult = articleFeign.findArticleByNameAndAuthorId(title, authorId);
-        ApArticle apArticle = (ApArticle) responseResult.getData();
-        if (apArticle == null) {
-            log.error("文章查询失败");
-            throw new RuntimeException("文章查询失败");
-        }
-        return apArticle.getId();
+        // 取ArticleID
+        articleId = Long.parseLong(saveApArticleResult.getErrorMessage());
     }
 
     private void saveApArticleContent(WmNews wmNews, Long articleId) {

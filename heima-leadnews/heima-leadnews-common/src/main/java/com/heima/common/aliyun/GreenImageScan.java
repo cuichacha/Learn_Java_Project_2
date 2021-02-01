@@ -30,7 +30,7 @@ public class GreenImageScan {
 
     private String accessKeyId;
     private String secret;
-    private String scenes;
+    private String pictureScenes;
 
     public Map imageScan(List<String> imageList) throws Exception {
         IClientProfile profile = DefaultProfile
@@ -54,7 +54,7 @@ public class GreenImageScan {
          * porn: porn表示色情场景检测
          */
         
-        httpBody.put("scenes", Arrays.asList(scenes.split(",")));
+        httpBody.put("scenes", Arrays.asList(pictureScenes.split(",")));
 
         /**
          * 如果您要检测的文件存于本地服务器上，可以通过下述代码片生成url

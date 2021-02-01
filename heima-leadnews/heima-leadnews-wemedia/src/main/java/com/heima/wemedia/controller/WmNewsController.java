@@ -1,5 +1,6 @@
 package com.heima.wemedia.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.heima.apis.wemedia.WmNewsControllerApi;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
@@ -60,7 +61,8 @@ public class WmNewsController implements WmNewsControllerApi {
         if (wmNews == null) {
             return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST);
         }
-        return ResponseResult.okResult(wmNews);
+        String jsonString = JSON.toJSONString(wmNews);
+        return ResponseResult.okResult(jsonString);
 //        return wmNews;
     }
 

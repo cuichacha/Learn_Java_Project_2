@@ -6,19 +6,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Map;
+
 /**
  * @author cuichacha
  * @date 1/31/21 20:36
  */
-@SpringBootTest(classes = AdminApplication.class)
-@RunWith(SpringRunner.class)
-public class WeMediaCensorshipTest {
-
-    @Autowired
-    private WmNewsCensorshipService wmNewsCensorshipService;
-
-    @Test
-    public void test1() {
-        wmNewsCensorshipService.censorByWmNewsId(6237);
-    }
-}
+//@SpringBootTest(classes = AdminApplication.class)
+//@RunWith(SpringRunner.class)
+//public class WeMediaCensorshipTest {
+//
+//    @Autowired
+//    private WmNewsCensorshipService wmNewsCensorshipService;
+//
+//    @Test
+//    public void test1() {
+//        wmNewsCensorshipService.censorByWmNewsId(6242);
+//    }
+//
+//}

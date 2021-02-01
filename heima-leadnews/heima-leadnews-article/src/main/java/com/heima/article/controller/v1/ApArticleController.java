@@ -20,14 +20,8 @@ public class ApArticleController implements ApArticleControllerApi {
     public ResponseResult saveApArticle(@RequestBody ApArticle apArticle) {
         boolean result = articleService.save(apArticle);
         if (result) {
-            return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
+            return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS.getCode(), apArticle.getId().toString());
         }
         return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
-    }
-
-    @Override
-    @GetMapping("/findByNameAndAuthorId")
-    public ResponseResult findArticleByNameAndAuthorId(@RequestBody String title, @RequestBody Integer authorId) {
-        return articleService.findArticleByNameAndAuthorId(title, authorId);
     }
 }
