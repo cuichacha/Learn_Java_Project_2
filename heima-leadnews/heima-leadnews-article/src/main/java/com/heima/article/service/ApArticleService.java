@@ -26,4 +26,12 @@ public interface ApArticleService extends IService<ApArticle> {
      * @return
      */
     public ResponseResult updateApArticle(ApArticle apArticle);
+
+    /**
+     * 删除文章(远程调用)
+     *
+     * @param id
+     * @return
+     */
+    public ResponseResult deleteApArticle(Long id);
 }

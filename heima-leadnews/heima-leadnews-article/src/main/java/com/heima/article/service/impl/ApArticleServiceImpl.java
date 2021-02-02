@@ -32,4 +32,13 @@ public class ApArticleServiceImpl extends ServiceImpl<ApArticleMapper, ApArticle
         }
         return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
     }
+
+    @Override
+    public ResponseResult deleteApArticle(Long id) {
+        boolean result = removeById(id);
+        if (result) {
+            return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
+        }
+        return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
+    }
 }

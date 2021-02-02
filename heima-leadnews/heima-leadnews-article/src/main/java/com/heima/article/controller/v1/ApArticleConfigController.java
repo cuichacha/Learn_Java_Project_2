@@ -25,4 +25,10 @@ public class ApArticleConfigController implements ApArticleConfigControllerApi {
     public ResponseResult updateArticleConfig(@RequestBody ApArticleConfig apArticleConfig) {
         return apArticleConfigService.updateArticleConfig(apArticleConfig);
     }
+
+    @Override
+    @DeleteMapping("delete")
+    public ResponseResult deleteArticleConfig(@RequestBody Long id) {
+        return apArticleConfigService.deleteArticleConfig(id);
+    }
 }

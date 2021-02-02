@@ -32,4 +32,15 @@ public class ApArticleContentServiceImpl extends ServiceImpl<ApArticleContentMap
         }
         return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
     }
+
+    @Override
+    public ResponseResult deleteArticleContent(Long id) {
+        LambdaUpdateWrapper<ApArticleContent> lambdaQueryWrapper = new LambdaUpdateWrapper<>();
+        lambdaQueryWrapper.eq(ApArticleContent::getArticleId, id);
+        boolean result = remove(lambdaQueryWrapper);
+        if (result) {
+            return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
+        }
+        return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
+    }
 }

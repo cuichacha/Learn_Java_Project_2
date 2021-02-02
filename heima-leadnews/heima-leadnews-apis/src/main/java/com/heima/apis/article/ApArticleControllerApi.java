@@ -4,7 +4,6 @@ import com.heima.model.common.article.pojos.ApArticle;
 import com.heima.model.common.dtos.ResponseResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * @author cuichacha
@@ -30,4 +29,13 @@ public interface ApArticleControllerApi {
      */
     @ApiOperation(value = "更新文章(远程调用)")
     public ResponseResult updateApArticle(ApArticle apArticle);
+
+    /**
+     * 删除文章(远程调用)
+     *
+     * @param id
+     * @return
+     */
+    @ApiOperation(value = "删除文章(远程调用)")
+    public ResponseResult deleteApArticle(Long id);
 }

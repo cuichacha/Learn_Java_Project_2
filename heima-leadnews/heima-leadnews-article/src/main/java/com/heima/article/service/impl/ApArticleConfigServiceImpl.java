@@ -31,4 +31,15 @@ public class ApArticleConfigServiceImpl extends ServiceImpl<ApArticleConfigMappe
         }
         return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
     }
+
+    @Override
+    public ResponseResult deleteArticleConfig(Long id) {
+        LambdaUpdateWrapper<ApArticleConfig> lambdaQueryWrapper = new LambdaUpdateWrapper<>();
+        lambdaQueryWrapper.eq(ApArticleConfig::getArticleId, id);
+        boolean result = remove(lambdaQueryWrapper);
+        if (result) {
+            return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
+        }
+        return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
+    }
 }

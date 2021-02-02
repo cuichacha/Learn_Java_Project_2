@@ -5,5 +5,7 @@ package com.heima.common.message;
  * @date 1/31/21 13:31
  */
 public class NewsAutoScanConstants {
-    public static final String WM_NEWS_AUTO_SCAN_TOPIC="wm.news.auto.scan.topic";
+    public static final String WM_NEWS_CENSORSHIP_TOPIC ="wm.news.censorship.topic";
+
+    public static final String WM_NEWS_DELETE_TOPIC = "wm.news.delete.topic";
 }

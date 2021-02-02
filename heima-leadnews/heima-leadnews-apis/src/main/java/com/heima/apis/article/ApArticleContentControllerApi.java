@@ -4,7 +4,6 @@ import com.heima.model.common.article.pojos.ApArticleContent;
 import com.heima.model.common.dtos.ResponseResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PutMapping;
 
 @Api(value = "文章内容操作", tags = "ApAuthor", description = "文章内容操作API")
 public interface ApArticleContentControllerApi {
@@ -25,4 +24,13 @@ public interface ApArticleContentControllerApi {
      */
     @ApiOperation(value = "更新文章内容(远程调用)")
     public ResponseResult updateArticleContent(ApArticleContent apArticleContent);
+
+    /**
+     * 删除文章内容(远程调用)
+     *
+     * @param id
+     * @return
+     */
+    @ApiOperation(value = "删除文章内容(远程调用)")
+    public ResponseResult deleteArticleContent(Long id);
 }

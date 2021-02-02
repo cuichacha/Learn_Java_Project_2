@@ -1,6 +1,6 @@
 package com.heima.admin.kafka.listener;
 
-import com.heima.admin.service.WmNewsCensorshipService;
+import com.heima.admin.service.ArticleDeleteService;
 import com.heima.common.message.NewsAutoScanConstants;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,20 +11,20 @@ import java.util.Optional;
 
 /**
  * @author cuichacha
- * @date 1/31/21 13:37
+ * @date 2/2/21 14:51
  */
 @Component
-public class WeMediaNewsCensorshipListener {
+public class ArticleDeleteListener {
 
     @Autowired
-    private WmNewsCensorshipService wmNewsCensorshipService;
+    private ArticleDeleteService articleDeleteService;
 
-    @KafkaListener(topics = NewsAutoScanConstants.WM_NEWS_CENSORSHIP_TOPIC)
-    public void receiveMessage(ConsumerRecord<?, ?> record) {
+    @KafkaListener(topics = NewsAutoScanConstants.WM_NEWS_DELETE_TOPIC)
+    public void deleteArticle(ConsumerRecord<?, ?> record) {
         Optional<? extends ConsumerRecord<?, ?>> optional = Optional.ofNullable(record);
         if (optional.isPresent()) {
             Object value = record.value();
-            wmNewsCensorshipService.censorByWmNewsId(Integer.valueOf((String) value));
+            articleDeleteService.deleteArticles(Long.valueOf((String) value));
         }
     }
 }

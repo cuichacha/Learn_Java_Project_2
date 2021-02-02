@@ -25,4 +25,10 @@ public class ApArticleController implements ApArticleControllerApi {
     public ResponseResult updateApArticle(@RequestBody ApArticle apArticle) {
         return articleService.updateApArticle(apArticle);
     }
+
+    @Override
+    @DeleteMapping("/delete")
+    public ResponseResult deleteApArticle(@RequestBody Long id) {
+        return articleService.deleteApArticle(id);
+    }
 }

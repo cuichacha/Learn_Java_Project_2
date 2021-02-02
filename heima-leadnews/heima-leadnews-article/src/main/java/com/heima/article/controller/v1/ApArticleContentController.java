@@ -25,4 +25,10 @@ public class ApArticleContentController implements ApArticleContentControllerApi
     public ResponseResult updateArticleContent(@RequestBody ApArticleContent apArticleContent) {
         return apArticleContentService.updateArticleContent(apArticleContent);
     }
+
+    @Override
+    @DeleteMapping("/delete")
+    public ResponseResult deleteArticleContent(@RequestBody Long id) {
+        return apArticleContentService.deleteArticleContent(id);
+    }
 }

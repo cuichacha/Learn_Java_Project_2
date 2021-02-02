@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 public interface ApArticleContentService extends IService<ApArticleContent> {
     /**
      * 保存文章内容(远程调用)
+     *
      * @param apArticleContent
      * @return
      */
@@ -20,4 +21,12 @@ public interface ApArticleContentService extends IService<ApArticleContent> {
      * @return
      */
     public ResponseResult updateArticleContent(ApArticleContent apArticleContent);
+
+    /**
+     * 删除文章内容(远程调用)
+     *
+     * @param id
+     * @return
+     */
+    public ResponseResult deleteArticleContent(Long id);
 }

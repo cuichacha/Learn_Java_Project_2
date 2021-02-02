@@ -1,7 +1,6 @@
 package com.heima.wemedia.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -199,7 +198,7 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         }
         if (!wmNews.getStatus().equals(WmNews.Status.NORMAL.getCode())) {
             // 发送Kafka消息
-            kafkaTemplate.send(NewsAutoScanConstants.WM_NEWS_AUTO_SCAN_TOPIC, JSON.toJSONString(wmNews.getId()));
+            kafkaTemplate.send(NewsAutoScanConstants.WM_NEWS_CENSORSHIP_TOPIC, JSON.toJSONString(wmNews.getId()));
         }
     }
 
@@ -294,6 +293,9 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         // 删除数据
         boolean result = removeById(id);
         if (result) {
+            // 发送Kafka消息
+            WmNews byId = getById(id);
+            kafkaTemplate.send(NewsAutoScanConstants.WM_NEWS_DELETE_TOPIC, JSON.toJSONString(byId.getArticleId()));
             return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
         }
         return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
