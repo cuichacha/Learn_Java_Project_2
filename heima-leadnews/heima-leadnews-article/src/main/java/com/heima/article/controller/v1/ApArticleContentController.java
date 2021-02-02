@@ -22,7 +22,7 @@ public class ApArticleContentController implements ApArticleContentControllerApi
 
     @Override
     @PutMapping("/update")
-    public ResponseResult updateArticleContent(ApArticleContent apArticleContent) {
+    public ResponseResult updateArticleContent(@RequestBody ApArticleContent apArticleContent) {
         return apArticleContentService.updateArticleContent(apArticleContent);
     }
 }

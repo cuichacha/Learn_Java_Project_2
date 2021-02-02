@@ -1,6 +1,7 @@
 package com.heima.wemedia.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -50,9 +51,6 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
 
     @Autowired
     private KafkaTemplate kafkaTemplate;
-
-    @Autowired
-    private WmNewsMapper wmNewsMapper;
 
     @Override
     public ResponseResult WmNewsList(WmNewsPageDto wmNewsPageDto) {
@@ -189,7 +187,13 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         } else {
             wmNews.setImages(replace);
             save(wmNews);
-            if (!coverImageUrls.isEmpty() || !contentImageUrls.isEmpty()) {
+            // 没有图片，传入空集合
+            List<String> emptyList = new ArrayList<>();
+            if (coverImageUrls.isEmpty() && !contentImageUrls.isEmpty()) {
+                saveImagesMaterialRelation(emptyList, contentImageUrls, wmNews);
+            } else if (!coverImageUrls.isEmpty() && contentImageUrls.isEmpty()) {
+                saveImagesMaterialRelation(coverImageUrls, emptyList, wmNews);
+            } else {
                 saveImagesMaterialRelation(coverImageUrls, contentImageUrls, wmNews);
             }
         }
@@ -201,9 +205,13 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
 
     private void saveImagesMaterialRelation(List<String> coverImageUrls, List<String> contentImageUrls, WmNews wmNews) {
         // 查询已保存封面图片
-        LambdaUpdateWrapper<WmMaterial> lambdaQueryWrapper1 = new LambdaUpdateWrapper<>();
-        lambdaQueryWrapper1.in(WmMaterial::getUrl, coverImageUrls);
-        List<WmMaterial> coverImages = wmMaterialMapper.selectList(lambdaQueryWrapper1);
+        // 增加无图情况判断
+        List<WmMaterial> coverImages = new ArrayList<>();
+        if (!coverImageUrls.isEmpty()) {
+            LambdaUpdateWrapper<WmMaterial> lambdaQueryWrapper1 = new LambdaUpdateWrapper<>();
+            lambdaQueryWrapper1.in(WmMaterial::getUrl, coverImageUrls);
+            coverImages = wmMaterialMapper.selectList(lambdaQueryWrapper1);
+        }
 
         for (WmMaterial wmMaterial : coverImages) {
             // 保存文章素材关系表
@@ -217,9 +225,13 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         }
 
         // 查询已保存的文章图片
-        LambdaUpdateWrapper<WmMaterial> lambdaQueryWrapper2 = new LambdaUpdateWrapper<>();
-        lambdaQueryWrapper2.in(WmMaterial::getUrl, contentImageUrls);
-        List<WmMaterial> contentImages = wmMaterialMapper.selectList(lambdaQueryWrapper2);
+        // 增加无图情况判断
+        List<WmMaterial> contentImages = new ArrayList<>();
+        if (!contentImageUrls.isEmpty()) {
+            LambdaUpdateWrapper<WmMaterial> lambdaQueryWrapper2 = new LambdaUpdateWrapper<>();
+            lambdaQueryWrapper2.in(WmMaterial::getUrl, contentImageUrls);
+            contentImages = wmMaterialMapper.selectList(lambdaQueryWrapper2);
+        }
 
         for (WmMaterial wmMaterial : contentImages) {
             // 保存文章素材关系表
@@ -304,9 +316,9 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         }
         // 修改状态
         if (wmNewsDto.getEnable() != null && wmNewsDto.getEnable() > -1 && wmNewsDto.getEnable() < 2) {
-            LambdaUpdateWrapper<WmNews> lambdaQueryWrapper = new LambdaUpdateWrapper<>();
-            lambdaQueryWrapper.eq(WmNews::getId, wmNews.getId()).set(WmNews::getEnable, wmNews.getEnable());
-            boolean result = update(lambdaQueryWrapper);
+            LambdaUpdateWrapper<WmNews> updateWrapper = new LambdaUpdateWrapper<>();
+            updateWrapper.eq(WmNews::getId, wmNewsDto.getId()).set(WmNews::getEnable, wmNewsDto.getEnable());
+            boolean result = update(updateWrapper);
             if (result) {
                 return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
             }

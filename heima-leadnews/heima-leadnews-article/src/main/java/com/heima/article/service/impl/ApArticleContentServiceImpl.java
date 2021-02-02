@@ -26,7 +26,7 @@ public class ApArticleContentServiceImpl extends ServiceImpl<ApArticleContentMap
     public ResponseResult updateArticleContent(ApArticleContent apArticleContent) {
         LambdaUpdateWrapper<ApArticleContent> lambdaQueryWrapper = new LambdaUpdateWrapper<>();
         lambdaQueryWrapper.eq(ApArticleContent::getArticleId, apArticleContent.getArticleId());
-        boolean result = update(lambdaQueryWrapper);
+        boolean result = update(apArticleContent, lambdaQueryWrapper);
         if (result) {
             return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
         }

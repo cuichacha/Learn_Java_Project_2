@@ -21,7 +21,7 @@ import java.util.Map;
 //
 //    @Test
 //    public void test1() {
-//        wmNewsCensorshipService.censorByWmNewsId(6248);
+//        wmNewsCensorshipService.censorByWmNewsId(6258);
 //    }
 //
 //}

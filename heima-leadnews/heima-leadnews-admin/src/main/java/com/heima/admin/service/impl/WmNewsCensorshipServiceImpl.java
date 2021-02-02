@@ -194,10 +194,10 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
         saveData(wmNews, isNewArticle);
 
         Date publishTime = wmNews.getPublishTime();
-        if (publishTime == null || publishTime.getTime() > System.currentTimeMillis()) {
-            updateWmNews(wmNews, WmNews.Status.SUCCESS.getCode(), "审核通过");
-        } else {
+        if (publishTime == null || publishTime.getTime() <= System.currentTimeMillis()) {
             updateWmNews(wmNews, WmNews.Status.PUBLISHED.getCode(), "审核通过");
+        } else {
+            updateWmNews(wmNews, WmNews.Status.SUCCESS.getCode(), "审核通过");
         }
     }
 

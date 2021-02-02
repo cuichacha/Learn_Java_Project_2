@@ -1,9 +1,6 @@
 package com.heima.model.common.wemedia.pojos;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import org.apache.ibatis.type.Alias;
 
@@ -88,13 +85,13 @@ public class WmNews {
     /**
      * 定时发布时间，不定时则为空
      */
-    @TableField("publish_time")
+    @TableField(value = "publish_time", strategy = FieldStrategy.IGNORED)
     private Date publishTime;
 
     /**
      * 拒绝理由
      */
-    @TableField("reason")
+    @TableField(value = "reason", strategy = FieldStrategy.IGNORED)
     private String reason;
 
     /**
