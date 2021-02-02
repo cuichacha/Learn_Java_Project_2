@@ -4,6 +4,7 @@ import com.heima.model.common.article.pojos.ApArticle;
 import com.heima.model.common.dtos.ResponseResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * @author cuichacha
@@ -20,4 +21,13 @@ public interface ApArticleControllerApi {
      */
     @ApiOperation(value = "保存文章(远程调用)")
     public ResponseResult saveApArticle(ApArticle apArticle);
+
+    /**
+     * 更新文章(远程调用)
+     *
+     * @param apArticle
+     * @return
+     */
+    @ApiOperation(value = "更新文章(远程调用)")
+    public ResponseResult updateApArticle(ApArticle apArticle);
 }

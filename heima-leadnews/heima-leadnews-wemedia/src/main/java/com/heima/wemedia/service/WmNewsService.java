@@ -5,6 +5,7 @@ import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.wemedia.dtos.WmNewsDto;
 import com.heima.model.common.wemedia.dtos.WmNewsPageDto;
 import com.heima.model.common.wemedia.pojos.WmNews;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * @author cuichacha
@@ -32,6 +33,14 @@ public interface WmNewsService extends IService<WmNews> {
      * @return
      */
     public abstract ResponseResult findNewsById(Integer id);
+
+    /**
+     * 根据Id查询自媒体文章(远程调用)
+     *
+     * @param id
+     * @return
+     */
+    public abstract ResponseResult findById(Integer id);
 
     /**
      * 删除自媒体文章

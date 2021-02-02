@@ -4,7 +4,6 @@ import com.heima.apis.article.ApArticleControllerApi;
 import com.heima.article.service.ApArticleService;
 import com.heima.model.common.article.pojos.ApArticle;
 import com.heima.model.common.dtos.ResponseResult;
-import com.heima.model.common.enums.AppHttpCodeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,13 +14,15 @@ public class ApArticleController implements ApArticleControllerApi {
     @Autowired
     private ApArticleService articleService;
 
-    @PostMapping("save")
     @Override
+    @PostMapping("save")
     public ResponseResult saveApArticle(@RequestBody ApArticle apArticle) {
-        boolean result = articleService.save(apArticle);
-        if (result) {
-            return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS.getCode(), apArticle.getId().toString());
-        }
-        return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
+        return articleService.saveApArticle(apArticle);
+    }
+
+    @Override
+    @PutMapping("/update")
+    public ResponseResult updateApArticle(@RequestBody ApArticle apArticle) {
+        return articleService.updateApArticle(apArticle);
     }
 }

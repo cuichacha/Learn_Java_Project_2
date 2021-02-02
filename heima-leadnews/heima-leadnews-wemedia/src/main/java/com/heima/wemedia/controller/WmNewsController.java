@@ -57,13 +57,7 @@ public class WmNewsController implements WmNewsControllerApi {
     @Override
     @GetMapping("/findOne/{id}")
     public ResponseResult findById(@PathVariable("id") Integer id) {
-        WmNews wmNews = wmNewsService.getById(id);
-        if (wmNews == null) {
-            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST);
-        }
-        String jsonString = JSON.toJSONString(wmNews);
-        return ResponseResult.okResult(jsonString);
-//        return wmNews;
+        return wmNewsService.findById(id);
     }
 
     @Override

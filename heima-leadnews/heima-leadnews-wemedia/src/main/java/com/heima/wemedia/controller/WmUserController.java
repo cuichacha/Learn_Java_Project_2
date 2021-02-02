@@ -3,7 +3,6 @@ package com.heima.wemedia.controller;
 import com.alibaba.fastjson.JSON;
 import com.heima.apis.wemedia.WmUserControllerApi;
 import com.heima.model.common.dtos.ResponseResult;
-import com.heima.model.common.enums.AppHttpCodeEnum;
 import com.heima.model.common.wemedia.pojos.WmUser;
 import com.heima.wemedia.service.WmUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +34,6 @@ public class WmUserController implements WmUserControllerApi {
     @Override
     @GetMapping("/findOne/{id}")
     public ResponseResult findWmUserById(@PathVariable("id") Integer id) {
-        WmUser wmUser = wmUserService.getById(id);
-        if (wmUser == null) {
-            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST);
-        }
-        String jsonString = JSON.toJSONString(wmUser);
-        return ResponseResult.okResult(jsonString);
+        return wmUserService.findWmUserById(id);
     }
 }

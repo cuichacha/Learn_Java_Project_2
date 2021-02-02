@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.wemedia.dtos.WmUserDto;
 import com.heima.model.common.wemedia.pojos.WmUser;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * @author cuichacha
@@ -24,6 +25,13 @@ public interface WmUserService extends IService<WmUser> {
      * @return
      */
     public abstract ResponseResult findWmUserByName(String name);
+
+    /**
+     * 根据ID查询用户(远程调用)
+     * @param id
+     * @return
+     */
+    public abstract ResponseResult findWmUserById(Integer id);
 
     /**
      * 自媒体用户登录

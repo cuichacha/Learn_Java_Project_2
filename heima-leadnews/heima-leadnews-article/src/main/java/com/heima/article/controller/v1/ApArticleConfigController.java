@@ -4,12 +4,8 @@ import com.heima.apis.article.ApArticleConfigControllerApi;
 import com.heima.article.service.ApArticleConfigService;
 import com.heima.model.common.article.pojos.ApArticleConfig;
 import com.heima.model.common.dtos.ResponseResult;
-import com.heima.model.common.enums.AppHttpCodeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/article_config")
@@ -18,13 +14,15 @@ public class ApArticleConfigController implements ApArticleConfigControllerApi {
     @Autowired
     private ApArticleConfigService apArticleConfigService;
 
-    @PostMapping("/save")
     @Override
+    @PostMapping("/save")
     public ResponseResult saveArticleConfig(@RequestBody ApArticleConfig apArticleConfig) {
-        boolean result = apArticleConfigService.save(apArticleConfig);
-        if (result) {
-            return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
-        }
-        return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
+        return apArticleConfigService.saveArticleConfig(apArticleConfig);
+    }
+
+    @Override
+    @PutMapping("update")
+    public ResponseResult updateArticleConfig(@RequestBody ApArticleConfig apArticleConfig) {
+        return apArticleConfigService.updateArticleConfig(apArticleConfig);
     }
 }

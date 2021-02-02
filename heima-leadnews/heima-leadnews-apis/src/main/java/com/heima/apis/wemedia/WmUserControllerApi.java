@@ -37,5 +37,4 @@ public interface WmUserControllerApi {
     @ApiOperation(value = "查询自媒体用户(远程调用)")
     public abstract ResponseResult findWmUserById(Integer id);
 
-
 }

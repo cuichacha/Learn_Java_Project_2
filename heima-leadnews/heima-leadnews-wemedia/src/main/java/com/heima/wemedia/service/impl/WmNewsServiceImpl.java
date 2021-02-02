@@ -251,6 +251,16 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
     }
 
     @Override
+    public ResponseResult findById(Integer id) {
+        WmNews wmNews = getById(id);
+        if (wmNews == null) {
+            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST);
+        }
+        String jsonString = JSON.toJSONString(wmNews);
+        return ResponseResult.okResult(jsonString);
+    }
+
+    @Override
     public ResponseResult deleteNews(Integer id) {
         // 检查参数
         if (id == null) {

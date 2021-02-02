@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.heima.article.mapper.ApArticleMapper;
 import com.heima.article.service.ApArticleService;
 import com.heima.model.common.article.pojos.ApArticle;
+import com.heima.model.common.dtos.ResponseResult;
+import com.heima.model.common.enums.AppHttpCodeEnum;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,4 +15,21 @@ import org.springframework.stereotype.Service;
 @Service
 public class ApArticleServiceImpl extends ServiceImpl<ApArticleMapper, ApArticle> implements ApArticleService {
 
+    @Override
+    public ResponseResult saveApArticle(ApArticle apArticle) {
+        boolean result = save(apArticle);
+        if (result) {
+            return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS.getCode(), apArticle.getId().toString());
+        }
+        return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseResult updateApArticle(ApArticle apArticle) {
+        boolean result = updateById(apArticle);
+        if (result) {
+            return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
+        }
+        return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
+    }
 }

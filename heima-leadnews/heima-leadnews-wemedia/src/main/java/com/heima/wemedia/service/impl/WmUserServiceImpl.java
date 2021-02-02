@@ -1,5 +1,6 @@
 package com.heima.wemedia.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -50,6 +51,16 @@ public class WmUserServiceImpl extends ServiceImpl<WmUserMapper, WmUser> impleme
             return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
         }
         return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST);
+    }
+
+    @Override
+    public ResponseResult findWmUserById(Integer id) {
+        WmUser wmUser = getById(id);
+        if (wmUser == null) {
+            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST);
+        }
+        String jsonString = JSON.toJSONString(wmUser);
+        return ResponseResult.okResult(jsonString);
     }
 
     @Override

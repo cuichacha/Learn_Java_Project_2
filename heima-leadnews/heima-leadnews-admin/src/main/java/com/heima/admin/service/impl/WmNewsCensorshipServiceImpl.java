@@ -253,7 +253,12 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
             articleId = Long.parseLong(saveApArticleResult.getErrorMessage());
         } else {
             // 旧文章需要更新
-
+            apArticle.setId(articleId);
+            ResponseResult updateApArticleResult = articleFeign.updateApArticle(apArticle);
+            if (!updateApArticleResult.getCode().equals(AppHttpCodeEnum.SUCCESS.getCode())) {
+                log.error("远程调用更新ApArticle对象发生异常");
+                throw new RuntimeException("远程调用更新ApArticle对象发生异常");
+            }
         }
     }
 
@@ -271,6 +276,11 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
             }
         } else {
             // 旧文章需要更新
+            ResponseResult updateArticleContentResult = articleFeign.updateArticleContent(apArticleContent);
+            if (!updateArticleContentResult.getCode().equals(AppHttpCodeEnum.SUCCESS.getCode())) {
+                log.error("远程调用更新apArticleContent对象发生异常");
+                throw new RuntimeException("远程调用更新apArticleContent对象发生异常");
+            }
         }
 
     }
@@ -291,7 +301,11 @@ public class WmNewsCensorshipServiceImpl implements WmNewsCensorshipService {
             }
         } else {
             // 旧文章需要更新
-
+            ResponseResult updateArticleConfigResult = articleFeign.updateArticleConfig(apArticleConfig);
+            if (!updateArticleConfigResult.getCode().equals(AppHttpCodeEnum.SUCCESS.getCode())) {
+                log.error("远程调用更新ApArticleConfig对象发生异常");
+                throw new RuntimeException("远程调用更新ApArticleConfig对象发生异常");
+            }
         }
     }
 
