@@ -290,12 +290,12 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         LambdaQueryWrapper<WmNewsMaterial> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(WmNewsMaterial::getNewsId, wmNews.getId());
         wmNewsMaterialMapper.delete(lambdaQueryWrapper);
+        // 发送Kafka消息
+        WmNews byId = getById(id);
+        kafkaTemplate.send(NewsAutoScanConstants.WM_NEWS_DELETE_TOPIC, JSON.toJSONString(byId.getArticleId()));
         // 删除数据
         boolean result = removeById(id);
         if (result) {
-            // 发送Kafka消息
-            WmNews byId = getById(id);
-            kafkaTemplate.send(NewsAutoScanConstants.WM_NEWS_DELETE_TOPIC, JSON.toJSONString(byId.getArticleId()));
             return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
         }
         return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
