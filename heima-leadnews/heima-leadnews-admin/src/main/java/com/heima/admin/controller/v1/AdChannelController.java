@@ -33,13 +33,13 @@ public class AdChannelController implements AdChannelControllerApi {
 
     @Override
     @PostMapping("/save")
-    public ResponseResult addChannel(AdChannel adChannel) {
+    public ResponseResult addChannel(@RequestBody AdChannel adChannel) {
         return adChannelService.addChannels(adChannel);
     }
 
     @Override
     @PostMapping("/update")
-    public ResponseResult updateChannel(AdChannel adChannel) {
+    public ResponseResult updateChannel(@RequestBody AdChannel adChannel) {
         return adChannelService.updateChannel(adChannel);
     }
 
