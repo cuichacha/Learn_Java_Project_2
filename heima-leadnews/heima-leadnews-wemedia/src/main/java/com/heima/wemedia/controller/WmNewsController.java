@@ -1,7 +1,7 @@
 package com.heima.wemedia.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.heima.apis.wemedia.WmNewsControllerApi;
+import com.heima.model.common.admin.dtos.NewsAuthDto;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
 import com.heima.model.common.wemedia.dtos.WmNewsDto;
@@ -70,5 +70,17 @@ public class WmNewsController implements WmNewsControllerApi {
     @PostMapping("/down_or_up")
     public ResponseResult publishOrWithdrawNews(@RequestBody WmNewsDto wmNewsDto) {
         return wmNewsService.publishOrWithdrawNews(wmNewsDto);
+    }
+
+    @Override
+    @PostMapping("/findList/")
+    public ResponseResult findWmNewsList(NewsAuthDto newsAuthDto) {
+        return wmNewsService.findWmNewsList(newsAuthDto);
+    }
+
+    @Override
+    @GetMapping("/find_news_vo/{id}")
+    public ResponseResult findWmNewsVo(@PathVariable("id") Integer id) {
+        return wmNewsService.findNewsVOById(id);
     }
 }

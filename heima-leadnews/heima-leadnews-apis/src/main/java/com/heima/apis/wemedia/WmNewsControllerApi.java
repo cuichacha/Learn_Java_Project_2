@@ -1,5 +1,6 @@
 package com.heima.apis.wemedia;
 
+import com.heima.model.common.admin.dtos.NewsAuthDto;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.wemedia.dtos.WmNewsDto;
 import com.heima.model.common.wemedia.dtos.WmNewsPageDto;
@@ -76,4 +77,24 @@ public interface WmNewsControllerApi {
      */
     @ApiOperation(value = "自媒体文章上架或下架")
     public abstract ResponseResult publishOrWithdrawNews(WmNewsDto wmNewsDto);
+
+    /**
+     * 人工审核文章列表(远程调用)
+     *
+     * @param newsAuthDto
+     * @return
+     */
+    @ApiOperation("审核文章列表")
+    public ResponseResult findWmNewsList(NewsAuthDto newsAuthDto);
+
+    /**
+     * 人工审核文章详情(远程调用)
+     *
+     * @param id
+     * @return
+     */
+    @ApiOperation("审核文章详情")
+    public ResponseResult findWmNewsVo(Integer id);
+
+
 }

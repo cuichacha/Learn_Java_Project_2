@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.heima.common.constants.wemedia.WeMediaConstants;
 import com.heima.common.message.NewsAutoScanConstants;
+import com.heima.model.common.admin.dtos.NewsAuthDto;
 import com.heima.model.common.dtos.PageResponseResult;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
@@ -17,11 +18,14 @@ import com.heima.model.common.wemedia.pojos.WmMaterial;
 import com.heima.model.common.wemedia.pojos.WmNews;
 import com.heima.model.common.wemedia.pojos.WmNewsMaterial;
 import com.heima.model.common.wemedia.pojos.WmUser;
+import com.heima.model.common.wemedia.vo.WmNewsVo;
 import com.heima.utils.threadlocal.WmThreadLocalUtils;
 import com.heima.wemedia.mapper.WmMaterialMapper;
 import com.heima.wemedia.mapper.WmNewsMapper;
 import com.heima.wemedia.mapper.WmNewsMaterialMapper;
 import com.heima.wemedia.service.WmNewsService;
+import com.heima.wemedia.service.WmUserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -50,6 +54,12 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
 
     @Autowired
     private KafkaTemplate kafkaTemplate;
+
+    @Autowired
+    private WmNewsMapper wmNewsMapper;
+
+    @Autowired
+    private WmUserService wmUserService;
 
     @Override
     public ResponseResult WmNewsList(WmNewsPageDto wmNewsPageDto) {
@@ -96,6 +106,24 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         ResponseResult responseResult = new PageResponseResult(startPage, pageSize, total.intValue());
         responseResult.setHost(fileServerUrl);
         responseResult.setData(wmNewsList);
+        return responseResult;
+    }
+
+    @Override
+    public ResponseResult findWmNewsList(NewsAuthDto newsAuthDto) {
+        // 校验参数
+        if (newsAuthDto == null) {
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+        }
+        // 获取数据记录数
+        Integer total = wmNewsMapper.findWmNewsListCount(newsAuthDto);
+        Integer startPage = newsAuthDto.getPage();
+        Integer pageSize = newsAuthDto.getSize();
+        // 获取数据集合
+        List<WmNewsVo> wmNewsVoList = wmNewsMapper.findWmNewsList(newsAuthDto);
+        // 返回数据
+        ResponseResult responseResult = new PageResponseResult(startPage, pageSize, total);
+        responseResult.setData(wmNewsVoList);
         return responseResult;
     }
 
@@ -267,6 +295,30 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         }
         // 返回数据
         ResponseResult responseResult = ResponseResult.okResult(wmNews);
+        responseResult.setHost(fileServerUrl);
+        return responseResult;
+    }
+
+    @Override
+    public ResponseResult findNewsVOById(Integer id) {
+        // 检查参数
+        if (id == null) {
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+        }
+        // 查询文章
+        WmNews wmNews = getById(id);
+        if (wmNews == null) {
+            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST, "文章不存在");
+        }
+        // 查询作者
+        WmUser wmUser = wmUserService.getById(wmNews.getUserId());
+        if (wmUser == null) {
+            return ResponseResult.errorResult(AppHttpCodeEnum.DATA_NOT_EXIST, "作者不存在");
+        }
+        // 封装VO对象
+        WmNewsVo wmNewsVo = new WmNewsVo();
+        BeanUtils.copyProperties(wmNews,wmNewsVo);
+        ResponseResult responseResult = ResponseResult.okResult(wmNewsVo);
         responseResult.setHost(fileServerUrl);
         return responseResult;
     }

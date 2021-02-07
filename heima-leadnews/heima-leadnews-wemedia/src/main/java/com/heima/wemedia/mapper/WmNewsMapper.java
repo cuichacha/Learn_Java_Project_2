@@ -16,8 +16,18 @@ import java.util.List;
 public interface WmNewsMapper extends BaseMapper<WmNews> {
 
     /**
-     * 查询包含作者名称的文章列表集合
+     * 查询包含作者名称的文章列表集合(远程调用)
+     *
+     * @param newsAuthDto
      * @return
      */
-    public abstract List<WmNewsVo> findList(NewsAuthDto newsAuthDto);
+    public abstract List<WmNewsVo> findWmNewsList(NewsAuthDto newsAuthDto);
+
+    /**
+     * 查询包含作者名称的文章列表集合数量(远程调用)
+     *
+     * @param newsAuthDto
+     * @return
+     */
+    public abstract Integer findWmNewsListCount(NewsAuthDto newsAuthDto);
 }
