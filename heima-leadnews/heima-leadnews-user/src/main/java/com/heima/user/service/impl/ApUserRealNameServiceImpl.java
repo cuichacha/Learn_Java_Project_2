@@ -91,7 +91,7 @@ public class ApUserRealNameServiceImpl extends ServiceImpl<ApUserRealNameMapper,
                 Integer apUserRealNameId = authDto.getId();
                 ApUserRealName userRealName = getById(apUserRealNameId);
                 Integer apUserRealNameUserId = userRealName.getUserId();
-                // 先判断作者是否以及存在于数据库中
+                // 先判断作者是否存在于数据库中
                 ResponseResult apAuthorResult = articleFeign.findAuthorByUserId(apUserRealNameUserId);
                 Integer apAuthorResultCode = apAuthorResult.getCode();
                 String name = userRealName.getName();

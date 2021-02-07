@@ -182,9 +182,19 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
             // 更新表记录数据
             updateById(wmNews);
             // 新增关系表记录
-            saveImagesMaterialRelation(coverImageUrls, contentImageUrls, wmNews);
+            // 没有图片，传入空集合
+            List<String> emptyList = new ArrayList<>();
+            if (coverImageUrls.isEmpty() && !contentImageUrls.isEmpty()) {
+                saveImagesMaterialRelation(emptyList, contentImageUrls, wmNews);
+            } else if (!coverImageUrls.isEmpty() && contentImageUrls.isEmpty()) {
+                saveImagesMaterialRelation(coverImageUrls, emptyList, wmNews);
+            } else {
+                saveImagesMaterialRelation(coverImageUrls, contentImageUrls, wmNews);
+            }
         } else {
+            // 把图片链接存入表中
             wmNews.setImages(replace);
+            // 保存数据
             save(wmNews);
             // 没有图片，传入空集合
             List<String> emptyList = new ArrayList<>();
