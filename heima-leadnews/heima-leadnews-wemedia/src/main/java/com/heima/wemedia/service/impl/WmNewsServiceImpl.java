@@ -115,6 +115,14 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         if (newsAuthDto == null) {
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
+        // 检查分页
+        newsAuthDto.checkParam();
+        // 设置分页
+        newsAuthDto.setPage((newsAuthDto.getPage() - 1) * newsAuthDto.getSize());
+        // 模糊查询
+        if (newsAuthDto.getTitle() != null) {
+            newsAuthDto.setTitle("%" + newsAuthDto.getTitle() + "%");
+        }
         // 获取数据记录数
         Integer total = wmNewsMapper.findWmNewsListCount(newsAuthDto);
         Integer startPage = newsAuthDto.getPage();
@@ -317,7 +325,7 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         }
         // 封装VO对象
         WmNewsVo wmNewsVo = new WmNewsVo();
-        BeanUtils.copyProperties(wmNews,wmNewsVo);
+        BeanUtils.copyProperties(wmNews, wmNewsVo);
         ResponseResult responseResult = ResponseResult.okResult(wmNewsVo);
         responseResult.setHost(fileServerUrl);
         return responseResult;

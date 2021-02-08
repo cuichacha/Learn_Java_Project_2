@@ -23,7 +23,8 @@ public class WmNewsAuthServiceImpl implements WmNewsAuthService {
 
     @Override
     public ResponseResult findNews(NewsAuthDto newsAuthDto) {
-        return weMediaFeign.findWmNewsList(newsAuthDto);
+        ResponseResult wmNewsList = weMediaFeign.findWmNewsList(newsAuthDto);
+        return wmNewsList;
     }
 
     @Override

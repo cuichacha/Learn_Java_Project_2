@@ -17,4 +17,5 @@ public class NewsAuthDto extends PageRequestDto {
      * 审核失败原因
      */
     private String msg;
+
 }
