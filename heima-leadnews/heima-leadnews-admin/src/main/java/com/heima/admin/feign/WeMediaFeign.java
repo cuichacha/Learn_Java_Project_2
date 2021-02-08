@@ -1,6 +1,7 @@
 package com.heima.admin.feign;
 
 import com.heima.model.common.admin.dtos.NewsAuthDto;
+import com.heima.model.common.dtos.PageResponseResult;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.wemedia.pojos.WmNews;
 import com.heima.model.common.wemedia.pojos.WmUser;
@@ -51,7 +52,7 @@ public interface WeMediaFeign {
      * @return
      */
     @PostMapping("/api/v1/news/findList/")
-    public ResponseResult findWmNewsList(NewsAuthDto dto);
+    public PageResponseResult findWmNewsList(NewsAuthDto dto);
 
     /**
      * 人工审核文章详情(远程调用)

@@ -110,10 +110,10 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
     }
 
     @Override
-    public ResponseResult findWmNewsList(NewsAuthDto newsAuthDto) {
+    public PageResponseResult findWmNewsList(NewsAuthDto newsAuthDto) {
         // 校验参数
         if (newsAuthDto == null) {
-            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+            return (PageResponseResult) ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
         // 检查分页
         newsAuthDto.checkParam();
@@ -130,7 +130,7 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
         // 获取数据集合
         List<WmNewsVo> wmNewsVoList = wmNewsMapper.findWmNewsList(newsAuthDto);
         // 返回数据
-        ResponseResult responseResult = new PageResponseResult(startPage, pageSize, total);
+        PageResponseResult responseResult = new PageResponseResult(startPage, pageSize, total);
         responseResult.setData(wmNewsVoList);
         return responseResult;
     }

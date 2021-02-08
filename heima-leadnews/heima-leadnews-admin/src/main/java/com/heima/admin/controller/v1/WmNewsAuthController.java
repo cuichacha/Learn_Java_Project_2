@@ -21,7 +21,7 @@ public class WmNewsAuthController implements NewsAuthControllerApi {
 
     @Override
     @PostMapping("/list")
-    public ResponseResult findNews(NewsAuthDto newsAuthDto) {
+    public ResponseResult findNews(@RequestBody NewsAuthDto newsAuthDto) {
         return wmNewsAuthService.findNews(newsAuthDto);
     }
 

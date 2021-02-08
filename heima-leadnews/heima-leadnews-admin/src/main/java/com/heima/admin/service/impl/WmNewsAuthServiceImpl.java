@@ -4,11 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.heima.admin.feign.WeMediaFeign;
 import com.heima.admin.service.WmNewsAuthService;
 import com.heima.model.common.admin.dtos.NewsAuthDto;
+import com.heima.model.common.dtos.PageResponseResult;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
 import com.heima.model.common.wemedia.pojos.WmNews;
 import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,9 +23,13 @@ public class WmNewsAuthServiceImpl implements WmNewsAuthService {
     @Autowired
     private WeMediaFeign weMediaFeign;
 
+    @Value("${fdfs.url}")
+    private String fileServerUrl;
+
     @Override
-    public ResponseResult findNews(NewsAuthDto newsAuthDto) {
-        ResponseResult wmNewsList = weMediaFeign.findWmNewsList(newsAuthDto);
+    public PageResponseResult findNews(NewsAuthDto newsAuthDto) {
+        PageResponseResult wmNewsList = weMediaFeign.findWmNewsList(newsAuthDto);
+        wmNewsList.setHost(fileServerUrl);
         return wmNewsList;
     }
 

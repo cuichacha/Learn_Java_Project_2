@@ -1,6 +1,7 @@
 package com.heima.admin.service;
 
 import com.heima.model.common.admin.dtos.NewsAuthDto;
+import com.heima.model.common.dtos.PageResponseResult;
 import com.heima.model.common.dtos.ResponseResult;
 
 /**
@@ -15,7 +16,7 @@ public interface WmNewsAuthService {
      * @param newsAuthDto
      * @return
      */
-    public abstract ResponseResult findNews(NewsAuthDto newsAuthDto);
+    public abstract PageResponseResult findNews(NewsAuthDto newsAuthDto);
 
     /**
      * 人工肾很文章详情(远程调用)
