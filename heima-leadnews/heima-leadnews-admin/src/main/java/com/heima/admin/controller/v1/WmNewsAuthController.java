@@ -33,13 +33,13 @@ public class WmNewsAuthController implements NewsAuthControllerApi {
 
     @Override
     @PostMapping("/auth_pass")
-    public ResponseResult authPass(NewsAuthDto newsAuthDto) {
+    public ResponseResult authPass(@RequestBody NewsAuthDto newsAuthDto) {
         return wmNewsAuthService.updateNewsStatus(newsAuthDto, WmNews.Status.SUCCESS.getCode());
     }
 
     @Override
     @PostMapping("/auth_fail")
-    public ResponseResult authFail(NewsAuthDto newsAuthDto) {
+    public ResponseResult authFail(@RequestBody NewsAuthDto newsAuthDto) {
         return wmNewsAuthService.updateNewsStatus(newsAuthDto, WmNews.Status.FAIL.getCode());
     }
 }

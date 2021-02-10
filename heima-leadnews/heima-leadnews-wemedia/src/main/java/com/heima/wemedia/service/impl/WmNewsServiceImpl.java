@@ -308,7 +308,7 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
     }
 
     @Override
-    public ResponseResult findNewsVOById(Integer id) {
+    public ResponseResult findNewsVoById(Integer id) {
         // 检查参数
         if (id == null) {
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);

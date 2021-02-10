@@ -74,13 +74,13 @@ public class WmNewsController implements WmNewsControllerApi {
 
     @Override
     @PostMapping("/findList/")
-    public ResponseResult findWmNewsList(NewsAuthDto newsAuthDto) {
+    public ResponseResult findWmNewsList(@RequestBody NewsAuthDto newsAuthDto) {
         return wmNewsService.findWmNewsList(newsAuthDto);
     }
 
     @Override
     @GetMapping("/find_news_vo/{id}")
     public ResponseResult findWmNewsVo(@PathVariable("id") Integer id) {
-        return wmNewsService.findNewsVOById(id);
+        return wmNewsService.findNewsVoById(id);
     }
 }

@@ -52,7 +52,7 @@ public interface WmNewsService extends IService<WmNews> {
      * @param id
      * @return
      */
-    public abstract ResponseResult findNewsVOById(Integer id);
+    public abstract ResponseResult findNewsVoById(Integer id);
 
     /**
      * 根据Id查询自媒体文章(远程调用)

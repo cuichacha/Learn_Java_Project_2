@@ -48,11 +48,11 @@ public interface WeMediaFeign {
     /**
      * 人工审核文章列表(远程调用)
      *
-     * @param dto
+     * @param newsAuthDto
      * @return
      */
     @PostMapping("/api/v1/news/findList/")
-    public PageResponseResult findWmNewsList(NewsAuthDto dto);
+    public PageResponseResult findWmNewsList(NewsAuthDto newsAuthDto);
 
     /**
      * 人工审核文章详情(远程调用)

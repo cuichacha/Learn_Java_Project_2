@@ -19,7 +19,7 @@ public interface WmNewsAuthService {
     public abstract PageResponseResult findNews(NewsAuthDto newsAuthDto);
 
     /**
-     * 人工肾很文章详情(远程调用)
+     * 人工审核文章详情(远程调用)
      *
      * @param id
      * @return

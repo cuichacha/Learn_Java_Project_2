@@ -3,7 +3,7 @@
 <mapper namespace="com.heima.wemedia.mapper.WmNewsMapper">
 
     <select id="findWmNewsList" resultType="com.heima.model.common.wemedia.vo.WmNewsVo" parameterType="com.heima.model.common.admin.dtos.NewsAuthDto">
-        select wn.*, wu.name
+        select wn.*, wu.name as authorName
         from wm_news wn
         left outer join wm_user wu on wn.user_id = wu.id
         <where>
