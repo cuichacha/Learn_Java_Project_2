@@ -1,6 +1,7 @@
 package com.heima.wemedia.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -396,5 +397,19 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
             }
         }
         return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR);
+    }
+
+    @Override
+    public List<Integer> findRelease() {
+        LambdaUpdateWrapper<WmNews> lambdaQueryWrapper = new LambdaUpdateWrapper<>();
+        lambdaQueryWrapper.eq(WmNews::getStatus, WmNews.Status.SUCCESS.getCode()).le(WmNews::getPublishTime, new Date());
+        List<WmNews> list = list(lambdaQueryWrapper);
+        List<Integer> idList = list.stream().map(new Function<WmNews, Integer>() {
+            @Override
+            public Integer apply(WmNews wmNews) {
+                return wmNews.getId();
+            }
+        }).collect(Collectors.toList());
+        return idList;
     }
 }

@@ -11,6 +11,8 @@ import com.heima.wemedia.service.WmNewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @author cuichacha
  * @date 1/30/21 13:24
@@ -82,5 +84,11 @@ public class WmNewsController implements WmNewsControllerApi {
     @GetMapping("/find_news_vo/{id}")
     public ResponseResult findWmNewsVo(@PathVariable("id") Integer id) {
         return wmNewsService.findNewsVoById(id);
+    }
+
+    @Override
+    @GetMapping("/findRelease")
+    public List<Integer> findRelease() {
+        return wmNewsService.findRelease();
     }
 }

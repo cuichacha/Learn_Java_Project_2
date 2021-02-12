@@ -7,6 +7,9 @@ import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.wemedia.dtos.WmNewsDto;
 import com.heima.model.common.wemedia.dtos.WmNewsPageDto;
 import com.heima.model.common.wemedia.pojos.WmNews;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 
 /**
  * @author cuichacha
@@ -77,4 +80,11 @@ public interface WmNewsService extends IService<WmNews> {
      * @return
      */
     public abstract ResponseResult publishOrWithdrawNews(WmNewsDto wmNewsDto);
+
+    /**
+     * 自动扫描待发布文章(远程调用)
+     *
+     * @return
+     */
+    List<Integer> findRelease();
 }

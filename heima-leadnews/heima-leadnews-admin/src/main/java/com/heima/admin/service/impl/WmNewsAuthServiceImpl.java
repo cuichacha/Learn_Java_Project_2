@@ -39,14 +39,10 @@ public class WmNewsAuthServiceImpl implements WmNewsAuthService {
     }
 
     @Override
-    @GlobalTransactional
+    @GlobalTransactional(rollbackFor = Exception.class)
     public ResponseResult updateNewsStatus(NewsAuthDto newsAuthDto, Short status) {
         // 校验参数
         if (newsAuthDto == null || status == null) {
-            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
-        }
-        // 状态必须为4人工审核通过或者2审核失败
-        if (status != WmNews.Status.ADMIN_SUCCESS.getCode() || status != WmNews.Status.FAIL.getCode()) {
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
         // 先查询对应文章wmNews
@@ -59,7 +55,7 @@ public class WmNewsAuthServiceImpl implements WmNewsAuthService {
         Object newsByIdData = wmNewsById.getData();
         WmNews wmNews = JSON.parseObject(newsByIdData.toString(), WmNews.class);
         // 审核通过/拒绝
-        if (status.equals(WmNews.Status.ADMIN_SUCCESS.getCode())) {
+        if (status.equals(WmNews.Status.SUCCESS.getCode())) {
             wmNews.setStatus(WmNews.Status.ADMIN_SUCCESS.getCode());
             wmNews.setReason("人工审核通过");
         } else if (status.equals(WmNews.Status.FAIL.getCode())) {

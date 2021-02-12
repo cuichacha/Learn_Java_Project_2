@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+
 /**
  * @author cuichacha
  * @date 1/31/21 13:53
@@ -62,4 +64,12 @@ public interface WeMediaFeign {
      */
     @GetMapping("/api/v1/news/find_news_vo/{id}")
     public ResponseResult findWmNewsVo(@PathVariable("id") Integer id);
+
+    /**
+     * 自动扫描待发布文章(远程调用)
+     *
+     * @return
+     */
+    @GetMapping("/api/v1/news/findRelease")
+    List<Integer> findRelease();
 }

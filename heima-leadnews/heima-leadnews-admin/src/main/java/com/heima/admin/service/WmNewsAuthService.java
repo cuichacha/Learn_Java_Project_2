@@ -30,6 +30,7 @@ public interface WmNewsAuthService {
      * 人工审核通过/拒绝(远程调用)
      *
      * @param newsAuthDto
+     * @param status
      * @return
      */
     public abstract ResponseResult updateNewsStatus(NewsAuthDto newsAuthDto, Short status);

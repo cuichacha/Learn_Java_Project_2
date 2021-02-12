@@ -7,6 +7,9 @@ import com.heima.model.common.wemedia.dtos.WmNewsPageDto;
 import com.heima.model.common.wemedia.pojos.WmNews;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 
 /**
  * @author cuichacha
@@ -96,5 +99,12 @@ public interface WmNewsControllerApi {
     @ApiOperation("审核文章详情")
     public ResponseResult findWmNewsVo(Integer id);
 
+    /**
+     * 自动扫描待发布文章(远程调用)
+     *
+     * @return
+     */
+    @ApiOperation("自动扫描待发布文章")
+    List<Integer> findRelease();
 
 }
